@@ -14,9 +14,9 @@ var configuration = {
 					move: 'r',
 					newState: 'q0'
 				}
-			}
+			},
+			accepted: true
 		}
 	},
-	acceptedStates: [ 'q0' ],
 	startState: 'q0'
 };
