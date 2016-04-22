@@ -6,12 +6,12 @@ var configuration = {
 			connections: {
 				'0': {
 					write: '1',
-					move: 'l',
+					move: 'L',
 					newState: 'q1'
 				},
 				'1': {
 					write: '0',
-					move: 'r',
+					move: 'R',
 					newState: 'q0'
 				}
 			},
