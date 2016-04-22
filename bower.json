@@ -25,6 +25,7 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "^3.3.6"
+    "bootstrap": "3.3.6",
+    "jsPlumb": "jsplumb#2.1.0"
   }
 }
