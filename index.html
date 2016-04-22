@@ -1,0 +1,135 @@
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="bower_components/jsPlumb/dist/js/jsPlumb-2.1.0-min.js"></script>
+<script src="tm.main.js"></script>
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+
+<div class="statemachine-demo" id="canvas">
+	<!--<div class="w" id="q0" style="top:5em">q0
+		<div class="ep" action="q0"></div>
+	</div>
+	<div class="w" id="q1" style="top:7em">q1
+		<div class="ep" action="q1"></div>
+	</div>
+	<div class="w" id="q2" style="top:9em">q2
+		<div class="ep" action="q2"></div>
+	</div>
+	<div class="w" id="q3" style="top:11em">q3
+		<div class="ep" action="q3"></div>
+	</div>
+	<div class="w" id="q4" style="top:13em">q4
+		<div class="ep" action="q4"></div>
+	</div>-->
+</div>
+
+<style>
+	.demo {
+		/* for IE10+ touch devices */
+		touch-action:none;
+	}
+
+	.w {
+		padding: 16px;
+		position: absolute;
+		z-index: 4;
+		border: 1px solid #2e6f9a;
+		box-shadow: 2px 2px 19px #e0e0e0;
+		-o-box-shadow: 2px 2px 19px #e0e0e0;
+		-webkit-box-shadow: 2px 2px 19px #e0e0e0;
+		-moz-box-shadow: 2px 2px 19px #e0e0e0;
+		-moz-border-radius: 8px;
+		border-radius: 8px;
+		opacity: 0.8;
+		cursor: move;
+		background-color: white;
+		font-size: 11px;
+		-webkit-transition: background-color 0.25s ease-in;
+		-moz-transition: background-color 0.25s ease-in;
+		transition: background-color 0.25s ease-in;
+	}
+
+	.w:hover {
+		background-color: #5c96bc;
+		color: white;
+
+	}
+
+	.aLabel {
+		-webkit-transition: background-color 0.25s ease-in;
+		-moz-transition: background-color 0.25s ease-in;
+		transition: background-color 0.25s ease-in;
+	}
+
+	.aLabel.jsplumb-hover, .jsplumb-source-hover, .jsplumb-target-hover {
+		background-color: #1e8151;
+		color: white;
+	}
+
+	.aLabel {
+		background-color: white;
+		opacity: 0.8;
+		padding: 0.3em;
+		border-radius: 0.5em;
+		border: 1px solid #346789;
+		cursor: pointer;
+	}
+
+	.ep {
+		position: absolute;
+		bottom: 37%;
+		right: -6px;
+		width: 1em;
+		height: 1em;
+		background-color: orange;
+		cursor: pointer;
+		box-shadow: 0 0 2px black;
+		-webkit-transition: -webkit-box-shadow 0.25s ease-in;
+		-moz-transition: -moz-box-shadow 0.25s ease-in;
+		transition: box-shadow 0.25s ease-in;
+	}
+
+	.ep:hover {
+		box-shadow: 0 0 6px black;
+	}
+
+	.statemachine-demo .jsplumb-endpoint {
+		z-index: 3;
+	}
+
+	/*#opened {
+		left: 10em;
+		top: 5em;
+	}
+
+	#phone1 {
+		left: 35em;
+		top: 12em;
+		width: 7em;
+	}
+
+	#inperson {
+		left: 12em;
+		top: 23em;
+	}
+
+	#phone2 {
+		left: 28em;
+		top: 24em;
+	}
+
+	#rejected {
+		left: 10em;
+		top: 35em;
+	}*/
+
+	.dragHover {
+		border: 2px solid orange;
+	}
+
+	path, .jsplumb-endpoint { cursor:pointer; }
+
+	.statemachine-demo { height:500px; }
+</style>
+
+<div id="code"></div>
