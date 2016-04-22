@@ -1,0 +1,30 @@
+{
+  "name": "we-like-machines",
+  "homepage": "https://github.com/saycle/we-like-machines",
+  "authors": [
+    "David Flury <david@flury.email>"
+  ],
+  "description": "Design turing machines and calculate the operations with graphical output.",
+  "main": "index.html",
+  "moduleType": [],
+  "keywords": [
+    "turing",
+    "machine",
+    "design",
+    "visualization",
+    "draw",
+    "calculate"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6"
+  }
+}
