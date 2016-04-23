@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Tape</title>
+
+    <link rel="stylesheet" href="Site.css"/>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet" type="text/css">
+    <style>
+        #tape {
+            height: 100px;
+            width: auto;
+        }
+        .tape-column {
+            width: 100px;
+            float: left;
+            height: 100%;
+            margin: 10px;
+        }
+        .tape-input-cell {
+            height: 80px;
+            border: 1px solid black;
+        }
+        .tape-input {
+            width: 100%;
+            height: 100%;
+            vertical-align: middle;
+            align-self: stretch;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-family: 'Inconsolata';
+            font-size: 60px;
+        }
+        .tape-readerwriter-cell {
+            margin-top: 5px;
+            height: 15px;
+            background: transparent;
+         }
+        .tape-readerwriter-cell.active {
+              background: darkred;
+            -webkit-box-shadow: 0px -34px 60px -5px rgba(209,209,209,1);
+            -moz-box-shadow: 0px -34px 60px -5px rgba(209,209,209,1);
+            box-shadow: 0px -34px 60px -5px rgba(209,209,209,1);
+          }
+    </style>
+    <script src="tm.tape.js"></script>
+    <script src="tm.column.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/jquery.autotab/js/jquery.autotab.min.js"></script>
+
+    <script>
+        var tape;
+        $(function() {
+            tape = new Tape();
+            tape.addColumn();
+            tape.addColumn();
+            tape.moveReaderWriter();
+        });
+
+
+    </script>
+
+</head>
+
+<body>
+<div id="input-container">
+    <div id="tape">
+        <!-- <div id="tape-column-0" class="tape-column">
+             <div class="tape-input-cell">
+                 <input type="text" class="tape-input" maxlength="1" />
+             </div>
+             <div class="tape-readerwriter-cell active"></div>
+         </div>
+         <div id="tape-column-1" class="tape-column">
+             <div class="tape-input-cell">
+                 <input type="text" class="tape-input" maxlength="1" />
+             </div>
+             <div class="tape-readerwriter-cell"></div>
+         </div>
+         <div id="tape-column-2" class="tape-column">
+             <div class="tape-input-cell">
+                 <input type="text" class="tape-input" maxlength="1" />
+             </div>
+             <div class="tape-readerwriter-cell"></div>
+         </div>-->
+    </div>
+</div>
+<button type="button" class="btn btn-success">Execute!</button>
+</body>
+</html>
