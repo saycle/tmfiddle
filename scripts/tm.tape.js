@@ -1,10 +1,11 @@
-function Tape() {
+function Tape(machine) {
+    this.machine = machine;
 	this.columns = [];
     this.input = "";
     this.readerWriter = [];
     this.addColumn();
     this.addColumn();
-    this.move();
+    this.move(null, 0);
 }
 
 Tape.prototype.getInput = function() {
@@ -16,22 +17,23 @@ Tape.prototype.getInput = function() {
     return this.input;
 }
 
-Tape.prototype.move = function(move) {
-    if(!move) {
-        this.readerWriter.index = 0;
-    } else {
-        switch(move) {
-            case -1:
-                if(this.readerWriter.index > 0) {
-                    this.readerWriter.index--;
-                }
-                break;
-            case 1:
-                if(this.readerWriter.index < this.columns.length - 1) {
-                    this.readerWriter.index++;
-                }
-                break;
-        }
+Tape.prototype.move = function(move, position) {
+    if(position != null) {
+        this.readerWriter.index = position;
+    }
+    switch(move) {
+        case -1:
+            if(this.readerWriter.index > 0) {
+                this.readerWriter.index--;
+            }
+            break;
+        case 0:
+            break;
+        case 1:
+            if(this.readerWriter.index < this.columns.length - 1) {
+                this.readerWriter.index++;
+            }
+            break;
     }
     if(this.readerWriter.pointer) {
         this.readerWriter.pointer.deactivate();
@@ -45,7 +47,7 @@ Tape.prototype.read = function() {
 }
 
 Tape.prototype.write = function(value) {
-	this.readerWriter.pointer.write(value);
+	this.readerWriter.pointer.write(value, this);
 }
 
 Tape.prototype.setFinished = function(status) {
@@ -59,6 +61,7 @@ Tape.prototype.reset = function() {
         column.inputCell.removeClass('accepted');
         column.inputCell.removeClass('failed');
     });
+    this.move(null, 0);
 }
 
 Tape.prototype.addColumn = function(prepend) {
@@ -75,17 +78,11 @@ Tape.prototype.addColumn = function(prepend) {
 		type: 'text',
 		class: 'tape-input',
 		type: 'text',
+        value: ' ',
 		maxlength: '1'
 	});
     column.input.keydown(function(e) {
-        if($(this).parent().parent().is(':last-child')) {
-            self.addColumn();
-		}
-		if($(this).parent().parent().is(':first-child')) {
-            self.addColumn(true);
-            $.autotab.previous();
-		}
-        column.write(String.fromCharCode(e.which));
+        column.write(String.fromCharCode(e.which), self, true);
 	});
     column.readerwriterCell =  $('<div/>', {
 		class: 'tape-readerwriter-cell'
@@ -93,7 +90,7 @@ Tape.prototype.addColumn = function(prepend) {
 	if(prepend) {
 		$("#tape").prepend(column.getMarkup());
 		this.columns.unshift(column);
-		this.readerWriter.index++;
+        this.move(null, 1);
 	} else {
 		$("#tape").append(column.getMarkup());
 		this.columns.push(column);
