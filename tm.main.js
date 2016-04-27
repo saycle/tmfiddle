@@ -1,14 +1,96 @@
 
-var MachineCanvas = function() {
-	this.states = [];
-	this._canvas = document.getElementById("canvas");
-	this._instance = null;
-	this._initializeJsPlumb();
+var configurationExample = {
+	states: {
+		'q0': {
+			presentation: {
+				position: { x: 100, y: 100 }
+			},
+			connections: {
+				'0': {
+					write: '0',
+					move: 'R',
+					newState: 'q0'
+				},
+				'1': {
+					write: '1',
+					move: 'R',
+					newState: 'q0'
+				},
+				' ': {
+					write: ' ',
+					move: 'L',
+					newState: 'q1'
+				}
+			},
+			accepted: false
+		},
+		'q1': {
+			presentation: {
+				position: { x: 300, y: 100 }
+			},
+			connections: {
+				'0': {
+					write: '1',
+					move: 'R',
+					newState: 'q2'
+				},
+				'1': {
+					write: '0',
+					move: 'L',
+					newState: 'q1'
+				},
+				' ': {
+					write: '1',
+					move: 'R',
+					newState: 'q2'
+				}
+			},
+			accepted: false,
+		},
+		'q2': {
+			presentation: {
+				position: { x: 500, y: 100 }
+			},
+			connections: {
+			},
+			accepted: true,
+		}
+	},
+	startState: 'q0'
 };
 
-MachineCanvas.prototype.addState = function(name, position) {
-	var state = new State(this, name, position);
-	this.states.push(state);
+// Enable persistent configuration
+var configuration = localStorage.configuration ? JSON.parse(localStorage.configuration) : configurationExample;
+
+var MachineCanvas = function() {
+	var self = this;
+	window.states = self.states;
+	self._canvas = document.getElementById("canvas");
+	self._instance = null;
+	self._initializeJsPlumb();
+
+	// Load initial configuration
+	jQuery.each(configuration.states, function(i,s) {
+		self.addState(i, s);
+	});
+
+	// Connect states
+	jQuery.each(configuration.states, function(i,s) {
+		jQuery.each(s.connections, function(k, c) {
+			var connection = self._instance.connect({
+				source: i,
+				target: c.newState,
+				type: 'basic'
+			});
+			var label = k + '/' + c.write + "," + c.move;
+			//label = label.replace(/ /g, '_'); // replace blank chars
+			connection.getOverlay("label").setLabel(label);
+		});
+	});
+};
+
+MachineCanvas.prototype.addState = function(name, model) {
+	var state = new State(name, model, this);
 };
 
 MachineCanvas.prototype._initializeJsPlumb = function() {
@@ -31,9 +113,7 @@ MachineCanvas.prototype._initializeJsPlumb = function() {
 	instance.registerConnectionType("basic", { anchor:"Continuous", connector:"StateMachine" });
 
 	instance.bind("click", function (c) {
-		var connectionName = null;
-		while(!connectionName)
-			connectionName = prompt("Enter connection specs (example: 1/1,L for read 1, write 1, direction L)")
+		var connectionName = promptConnectionName(c.getOverlay("label").getLabel());
 		c.getOverlay("label").setLabel(connectionName);
 	});
 
@@ -41,41 +121,64 @@ MachineCanvas.prototype._initializeJsPlumb = function() {
 		instance.detach(c);
 	});
 
-	// bind a connection listener. note that the parameter passed to this function contains more than
-	// just the new connection - see the documentation for a full list of what is included in 'info'.
-	// this listener sets the connection's internal
-	// id as the label overlay's text.
-	instance.bind("connection", function (info) {
-		var connectionName = prompt("Enter connection specs (example: 1/1,L for read 1, write 1, direction L)");
-		info.connection.getOverlay("label").setLabel(connectionName);
+	instance.bind("connection", function (info, e) {
+		if(e != null) // if event is null, the connection has been created programmatically
+			info.source.addConnection(info);
+	});
+
+	instance.bind("connectionDetached", function(info) {
+		info.source.removeConnection(info);
 	});
 
 	jsPlumb.on(this._canvas, "dblclick", function(e) {
 		var stateName = prompt('Enter the state name (example: q7)');
-		machineCanvas.addState(stateName, {x:e.offsetX, y: e.offsetY});
+		if(configuration.states[stateName] != null)
+			alert("State with the id " + stateName + " already exists.");
+		else {
+			configuration.states[stateName] = {
+				presentation: {
+					position: {x: e.offsetX, y: e.offsetY}
+				},
+				connections: {},
+				accepted: false,
+			};
+			machineCanvas.addState(stateName, configuration.states[stateName]);
+		}
 	});
 
 };
 
 
+var promptConnectionName = function(defaultValue) {
+	var connectionName = null;
+	while(!connectionName || !/^.\/.,[LR]$/.test(connectionName))
+		connectionName = prompt("Enter connection specs (example: 1/1,L for read 1, write 1, direction L)", defaultValue);
+	return connectionName;
+};
+
 jsPlumb.ready(function () {
 	var machineCanvas = new MachineCanvas();
 });
 
-
-var State = function(machineCanvas, name, position) {
-	this.name = name;
-	this.position = position;
+var State = function(name, model, machineCanvas) {
+	var self = this;
 
 	var d = document.createElement("div");
+	d.model = model;
+
 	d.className = "w";
 	d.id = name;
 	d.innerHTML = name + "<div class=\"ep\"></div>";
-	d.style.left = position.x + "px";
-	d.style.top = position.y + "px";
+	d.style.left = model.presentation.position.x + "px";
+	d.style.top = model.presentation.position.y + "px";
 	machineCanvas._instance.getContainer().appendChild(d);
 
-	machineCanvas._instance.draggable(d);
+	machineCanvas._instance.draggable(d, {
+		drag: function(draggedWrapper) {
+			model.presentation.position.x = $(draggedWrapper.el).offset().left;
+			model.presentation.position.y = $(draggedWrapper.el).offset().top;
+		}
+	});
 
 	machineCanvas._instance.makeSource(d, {
 		filter: ".ep",
@@ -85,10 +188,7 @@ var State = function(machineCanvas, name, position) {
 		extract:{
 			"action":"the-action"
 		},
-		maxConnections: 8,
-		onMaxConnections: function (info, e) {
-			alert("Maximum connections (" + info.maxConnections + ") reached");
-		}
+		maxConnections: -1
 	});
 
 	machineCanvas._instance.makeTarget(d, {
@@ -100,7 +200,35 @@ var State = function(machineCanvas, name, position) {
 	$(d).on('dblclick', function(e) {
 		e.stopPropagation();
 		var newName = prompt('Rename state to');
+
+		configuration.states[newName] = configuration.states[d.id];
+		delete configuration.states[d.id];
 		d.id = newName;
 		d.innerHTML = newName + "<div class=\"ep\"></div>";
+
 	});
+
+	d.addConnection = function(info) {
+
+		var connectionName = null;
+		while(!connectionName || model.connections[connectionName.split('/')[0]] != null)
+			connectionName = promptConnectionName('');
+
+		info.connection.getOverlay("label").setLabel(connectionName);
+		model.connections[connectionName.split('/')[0]] = {
+			write: connectionName.split('/')[1].split(',')[0],
+			move: connectionName.split('/')[1].split(',')[1],
+			newState: info.target.id
+		};
+
+	};
+
+	d.removeConnection = function(info) {
+		delete model.connections[info.connection.getOverlay("label").getLabel().split('/')[0]];
+	};
 };
+
+window.setInterval(function() {
+	$("#code").html( JSON.stringify(configuration, null, 2));
+	localStorage.configuration = JSON.stringify(configuration);
+}, 1000);
