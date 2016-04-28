@@ -5,7 +5,7 @@ function Tape(machine) {
     this.readerWriter = [];
     this.addColumn();
     this.addColumn();
-    this.move(null, 0);
+    this.position(0);
 }
 
 Tape.prototype.getInput = function() {
@@ -15,12 +15,9 @@ Tape.prototype.getInput = function() {
     });
     this.input = input.trim();
     return this.input;
-}
+};
 
-Tape.prototype.move = function(move, position) {
-    if(position != null) {
-        this.readerWriter.index = position;
-    }
+Tape.prototype.move = function(move) {
     switch(move) {
         case -1:
             if(this.readerWriter.index > 0) {
@@ -40,29 +37,34 @@ Tape.prototype.move = function(move, position) {
     }
     this.readerWriter.pointer = this.columns[this.readerWriter.index];
     this.readerWriter.pointer.activate();
-}
+};
+
+Tape.prototype.position = function(position) {
+    this.readerWriter.index = position;
+    this.move();
+};
 
 Tape.prototype.read = function() {
 	return this.readerWriter.pointer.read();
-}
+};
 
-Tape.prototype.write = function(value) {
-	this.readerWriter.pointer.write(value, this);
-}
+Tape.prototype.write = function(value, next) {
+	this.readerWriter.pointer.write(value, this, false, next);
+};
 
 Tape.prototype.setFinished = function(status) {
     this.columns.forEach(function(column) {
         column.inputCell.addClass(status ? 'accepted' : 'failed');
     });
-}
+};
 
 Tape.prototype.reset = function() {
     this.columns.forEach(function(column) {
         column.inputCell.removeClass('accepted');
         column.inputCell.removeClass('failed');
     });
-    this.move(null, 1);
-}
+    this.position(1);
+};
 
 Tape.prototype.addColumn = function(prepend) {
     var self = this;
@@ -90,10 +92,10 @@ Tape.prototype.addColumn = function(prepend) {
 	if(prepend) {
 		$("#tape").prepend(column.getMarkup());
 		this.columns.unshift(column);
-        this.move(null, 1);
+        this.position(1);
 	} else {
 		$("#tape").append(column.getMarkup());
 		this.columns.push(column);
 	}
 	$('.tape-input').autotab({ maxlength: 1 });
-}
+};
