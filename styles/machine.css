@@ -10,9 +10,15 @@
 }
 .tape-input-cell {
     height: 80px;
-    border: 1px solid black;
     background-color: transparent;
     color: black;
+    border: 1px solid black;
+    box-shadow: 2px 2px 19px #e0e0e0;
+    -o-box-shadow: 2px 2px 19px #e0e0e0;
+    -webkit-box-shadow: 2px 2px 19px #e0e0e0;
+    -moz-box-shadow: 2px 2px 19px #e0e0e0;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
 }
 .tape-input {
     width: 100%;
