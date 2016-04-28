@@ -20,6 +20,18 @@ html {
 
 .tm-designer-tools {
     margin-left: 15px;
+    margi-bottom: -1px;
+}
+
+.tm-designer-tool {
+    -webkit-border-top-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-topright: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    bottom: -1px;
+    z-index: 1;
 }
 
 #machine-wrapper {

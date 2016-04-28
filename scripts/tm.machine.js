@@ -42,7 +42,7 @@ Machine.prototype.calculateStep = function() {
     }
     var step = this.configuration.states[this.currentState].connections[this.tape.read()];
     if(step) {
-        this.tape.write(step.write, step.move);
+        this.tape.write(step.write);
         this.tape.move(step.move == 'L' ? -1 : step.move == 'R' ? 1 : 0);
         this.setCurrentState(step.newState);
     } else {

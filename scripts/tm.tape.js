@@ -43,8 +43,8 @@ Tape.prototype.read = function() {
 	return this.readerWriter.pointer.read();
 };
 
-Tape.prototype.write = function(value, next) {
-	this.readerWriter.pointer.write(value, this, false, next);
+Tape.prototype.write = function(value) {
+	this.readerWriter.pointer.write(value, this, false);
 };
 
 Tape.prototype.setFinished = function(status) {
