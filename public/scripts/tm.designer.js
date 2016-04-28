@@ -115,6 +115,9 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
 
     jsPlumb.on(this._canvas, "dblclick", function (e) {
         var stateName = prompt('Enter the state name (example: q7)');
+        if(stateName == null)
+            return;
+
         if (configuration.states[stateName] != null)
             alert("State with id " + stateName + " already exists.");
         else {
