@@ -63,7 +63,9 @@ var configurationExample = {
 var configuration = localStorage.configuration ? JSON.parse(localStorage.configuration) : configurationExample;
 
 var MachineCanvas = function() {
+
 	var self = this;
+	self.tool = 'move';
 	window.states = self.states;
 	self._canvas = document.getElementById("canvas");
 	self._instance = null;
@@ -82,11 +84,19 @@ var MachineCanvas = function() {
 				}, 20);
 			});
 		});
+
+		$(".tm-designer-tool").click(function() {
+			self.tool = $(this).attr('tool');
+			$(".tm-designer-tool").removeClass('btn-primary');
+			$(this).addClass('btn-primary');
+		});
+
 	});
 };
 
 MachineCanvas.prototype.initState = function() {
 	var self = this;
+
 
 	// Load initial configuration
 	jQuery.each(configuration.states, function(i,s) {
@@ -96,16 +106,24 @@ MachineCanvas.prototype.initState = function() {
 	// Connect states
 	jQuery.each(configuration.states, function(i,s) {
 		jQuery.each(s.connections, function(k, c) {
-			var connection = self._instance.connect({
-				source: i,
-				target: c.newState,
-				type: 'basic'
-			});
-			var label = k + '/' + c.write + "," + c.move;
-			//label = label.replace(/ /g, '_'); // replace blank chars
-			connection.getOverlay("label").setLabel(label);
+			try {
+
+				var connection = self._instance.connect({
+					source: i,
+					target: c.newState,
+					type: 'basic'
+				});
+				var label = k + '/' + c.write + "," + c.move;
+				//label = label.replace(/ /g, '_'); // replace blank chars
+				connection.getOverlay("label").setLabel(label);
+			}
+			catch(e) { // endpoint does not exist - remove connection
+				console.log(e);
+				delete s.connections[k];
+			}
 		});
 	});
+
 };
 
 MachineCanvas.prototype.addState = function(name, model) {
@@ -132,8 +150,13 @@ MachineCanvas.prototype._initializeJsPlumb = function() {
 	instance.registerConnectionType("basic", { anchor:"Continuous", connector:"StateMachine" });
 
 	instance.bind("click", function (c) {
-		var connectionName = promptConnectionName(c.getOverlay("label").getLabel());
-		c.getOverlay("label").setLabel(connectionName);
+		// Connection click
+		if(machineCanvas.tool == 'remove')
+			instance.detach(c);
+		else {
+			var connectionName = promptConnectionName(c.getOverlay("label").getLabel());
+			c.getOverlay("label").setLabel(connectionName);
+		}
 	});
 
 	instance.bind("dblclick", function (c) {
@@ -179,6 +202,7 @@ jsPlumb.ready(function () {
 	var machineCanvas = new MachineCanvas();
 });
 
+
 var State = function(name, model, machineCanvas) {
 	var self = this;
 
@@ -194,8 +218,9 @@ var State = function(name, model, machineCanvas) {
 
 	machineCanvas._instance.draggable(d, {
 		drag: function(draggedWrapper) {
-			model.presentation.position.x = $(draggedWrapper.el).offset().left;
-			model.presentation.position.y = $(draggedWrapper.el).offset().top - $(machineCanvas._instance.getContainer()).offset().top;
+			$(draggedWrapper.el).one('click', function(e) { e.stopPropagation(); });
+			model.presentation.position.x = draggedWrapper.pos[0];
+			model.presentation.position.y = draggedWrapper.pos[1];// - $(machineCanvas._instance.getContainer()).offset().top;
 		}
 	});
 
@@ -216,14 +241,26 @@ var State = function(name, model, machineCanvas) {
 		allowLoopback: true
 	});
 
-	$(d).on('dblclick', function(e) {
-		e.stopPropagation();
-		var newName = prompt('Rename state to');
+	$(d).on('click', function(e) {
 
-		configuration.states[newName] = configuration.states[d.id];
-		delete configuration.states[d.id];
-		d.id = newName;
-		d.innerHTML = newName + "<div class=\"ep\"></div>";
+		e.stopPropagation();
+
+		if(machineCanvas.tool == 'edit') {
+			var newName = prompt('Rename state to', d.id);
+			if(newName == d.id || newName == null)
+				return;
+			configuration.states[newName] = configuration.states[d.id];
+			delete configuration.states[d.id];
+			d.id = newName;
+			d.innerHTML = newName + "<div class=\"ep\"></div>";
+		}
+		else if(machineCanvas.tool == 'remove') {
+			machineCanvas._instance.detachAllConnections(d.id);
+			machineCanvas._instance.removeAllEndpoints(d.id);
+			machineCanvas._instance.detach(d.id);
+			d.remove();
+			delete configuration.states[d.id];
+		}
 
 	});
 
