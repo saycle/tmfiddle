@@ -9,6 +9,6 @@ app.use('/', express.static(publicFolder));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 
 var server = http.createServer(app);
-server.listen(3000, function () {
-	console.log('Express server listening on port ' + 3000);
+server.listen(process.env.PORT || 3000, function () {
+	console.log('Express server listening on port ' + process.env.PORT || 3000);
 });
