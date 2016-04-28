@@ -1,88 +1,55 @@
-<script src="bower_components/jquery/dist/jquery.min.js"></script>
-<script src="bower_components/jsPlumb/dist/js/jsPlumb-2.1.0-min.js"></script>
-<script src="scripts/tm.designer.js"></script>
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
-<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<title>we-like-machines</title>
+
+	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+	<link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="styles/site.css"/>
+	<link rel="stylesheet" href="styles/machine.css"/>
+	<link rel="stylesheet" href="styles/designer.css"/>
 
 
+	<script src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="bower_components/jquery.autotab/js/jquery.autotab.min.js"></script>
+	<script src="bower_components/jsPlumb/dist/js/jsPlumb-2.1.0-min.js"></script>
+
+	<script src="scripts/tm.machine.js"></script>
+	<script src="scripts/tm.tape.js"></script>
+	<script src="scripts/tm.column.js"></script>
+	<script src="scripts/tm.designer.js"></script>
+
+	<script>
+		var machine;
+		$(function() {
+			machine = new Machine();
+			$("#executeStepButton").click(function() {
+				machine.calculateStep();
+			});
+			$("#executeAnimatedButton").click(function() {
+				machine.calculateAll(1500);
+			});
+			$("#executeAllButton").click(function() {
+				machine.calculateAll(10);
+			});
+		});
+	</script>
+
+</head>
+
+<body>
 <div class="statemachine-demo" id="canvas"></div>
-
-<style>
-
-	.w {
-		padding: 16px;
-		position: absolute;
-		z-index: 4;
-		border: 1px solid #2e6f9a;
-		box-shadow: 2px 2px 19px #e0e0e0;
-		-o-box-shadow: 2px 2px 19px #e0e0e0;
-		-webkit-box-shadow: 2px 2px 19px #e0e0e0;
-		-moz-box-shadow: 2px 2px 19px #e0e0e0;
-		-moz-border-radius: 8px;
-		border-radius: 8px;
-		opacity: 0.8;
-		cursor: move;
-		background-color: white;
-		font-size: 11px;
-		-webkit-transition: background-color 0.25s ease-in;
-		-moz-transition: background-color 0.25s ease-in;
-		transition: background-color 0.25s ease-in;
-	}
-
-	.w:hover {
-		background-color: #5c96bc;
-		color: white;
-	}
-
-	.aLabel {
-		-webkit-transition: background-color 0.25s ease-in;
-		-moz-transition: background-color 0.25s ease-in;
-		transition: background-color 0.25s ease-in;
-	}
-
-	.aLabel.jsplumb-hover, .jsplumb-source-hover, .jsplumb-target-hover {
-		background-color: #1e8151;
-		color: white;
-	}
-
-	.aLabel {
-		background-color: white;
-		opacity: 0.8;
-		padding: 0.3em;
-		border-radius: 0.5em;
-		border: 1px solid #346789;
-		cursor: pointer;
-	}
-
-	.ep {
-		position: absolute;
-		bottom: 37%;
-		right: -6px;
-		width: 1em;
-		height: 1em;
-		background-color: orange;
-		cursor: pointer;
-		box-shadow: 0 0 2px black;
-		-webkit-transition: -webkit-box-shadow 0.25s ease-in;
-		-moz-transition: -moz-box-shadow 0.25s ease-in;
-		transition: box-shadow 0.25s ease-in;
-	}
-
-	.ep:hover {
-		box-shadow: 0 0 6px black;
-	}
-
-	.statemachine-demo .jsplumb-endpoint {
-		z-index: 3;
-	}
-
-	.dragHover {
-		border: 2px solid orange;
-	}
-
-	path, .jsplumb-endpoint { cursor:pointer; }
-
-	.statemachine-demo { height:500px; border:2px solid #DDD; }
-</style>
-
 <pre id="code"></pre>
+<div id="input-container">
+	<div id="tape">
+	</div>
+</div>
+<button type="button" class="btn btn-success" id="executeStepButton">Execute Step</button>
+<button type="button" class="btn btn-warning" id="executeAnimatedButton">Execute Animated</button>
+<button type="button" class="btn btn-danger" id="executeAllButton">Execute All</button>
+</body>
+</html>

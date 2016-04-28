@@ -2,6 +2,7 @@ function Machine() {
     var self = this;
     this.tape = new Tape(this);
     this.reset();
+    this.tape.move(null, 0);
 }
 
 Machine.prototype.reset = function() {
@@ -44,56 +45,6 @@ Machine.prototype.calculateStep = function() {
     return null;
 }
 
-
 Machine.prototype.setConfiguration = function() {
-    this.configuration = {
-        states: {
-            'q0': {
-                connections: {
-                    '0': {
-                        write: '0',
-                        move: 'R',
-                        newState: 'q0'
-                    },
-                    '1': {
-                        write: '1',
-                        move: 'R',
-                        newState: 'q0'
-                    },
-                    ' ': {
-                        write: ' ',
-                        move: 'L',
-                        newState: 'q1'
-                    }
-                },
-                accepted: false
-            },
-            'q1': {
-                connections: {
-                    '0': {
-                        write: '1',
-                        move: 'R',
-                        newState: 'q2'
-                    },
-                    '1': {
-                        write: '0',
-                        move: 'L',
-                        newState: 'q1'
-                    },
-                    ' ': {
-                        write: '1',
-                        move: 'R',
-                        newState: 'q2'
-                    }
-                },
-                accepted: false,
-            },
-            'q2': {
-                connections: {
-                },
-                accepted: true,
-            }
-        },
-        startState: 'q0'
-    };
+    this.configuration = configuration;
 }

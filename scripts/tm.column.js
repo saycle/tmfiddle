@@ -6,15 +6,15 @@ Column.prototype.read = function() {
     return value === "" ? " " : value;
 }
 Column.prototype.write = function(value, tape, interupt) {
-    if(tape.machine.running && interupt) {
-        self.machine.reset();
-    }
     if($(this.element).is(':last-child')) {
         tape.addColumn();
     }
     if($(this.element).is(':first-child')) {
         tape.addColumn(true);
         $.autotab.previous();
+    }
+    if(interupt) {
+        self.machine.reset();
     }
     this.input.val(value);
 }

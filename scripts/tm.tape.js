@@ -61,7 +61,7 @@ Tape.prototype.reset = function() {
         column.inputCell.removeClass('accepted');
         column.inputCell.removeClass('failed');
     });
-    this.move(null, 0);
+    this.move(null, 1);
 }
 
 Tape.prototype.addColumn = function(prepend) {
