@@ -42,7 +42,14 @@
 </head>
 
 <body>
-<div class="statemachine-demo" id="canvas"></div>
+<select id="example-selector">
+	<option>&lt; select example &gt;</option>
+	<option value="data/addOne.json">One-bit addition</option>
+	<option value="data/multiply-unary.json">Multiply (unary)</option>
+</select>
+<div class="statemachine-demo" id="canvas">
+</div>
+
 <pre id="code"></pre>
 <div id="input-container">
 	<div id="tape">

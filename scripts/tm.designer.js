@@ -68,6 +68,25 @@ var MachineCanvas = function() {
 	self._canvas = document.getElementById("canvas");
 	self._instance = null;
 	self._initializeJsPlumb();
+	self.initState();
+
+	$(document).ready(function() {
+		$("#example-selector").change(function() {
+			$.ajax($(this).val()).done(function(res) {
+				configuration = res;
+				self._instance.reset();
+				self._canvas.innerHTML = "";
+				self.initState();
+				setTimeout(function() {
+				jsPlumb.repaintEverything();
+				}, 20);
+			});
+		});
+	});
+};
+
+MachineCanvas.prototype.initState = function() {
+	var self = this;
 
 	// Load initial configuration
 	jQuery.each(configuration.states, function(i,s) {
