@@ -81,8 +81,8 @@ Tape.prototype.addColumn = function(prepend) {
         value: ' ',
 		maxlength: '1'
 	});
-    column.input.keydown(function(e) {
-        column.write(String.fromCharCode(e.which), self, true);
+    column.input.keypress(function(e) {
+        column.write(e.key, self, true);
 	});
     column.readerwriterCell =  $('<div/>', {
 		class: 'tape-readerwriter-cell'
