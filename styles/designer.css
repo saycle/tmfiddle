@@ -51,6 +51,10 @@
     cursor: pointer;
 }
 
+.aLabel:hover {
+    z-index:1000;
+}
+
 .ep {
     position: absolute;
     bottom: 37%;
@@ -79,7 +83,7 @@
 
 path, .jsplumb-endpoint { cursor:pointer; }
 
-.statemachine-demo { height:500px; border:2px solid #DDD; }
+.statemachine-demo { height:500px; border:2px solid #DDD; border-width:2px 0 2px 0; }
 
 pre {
     display: none !important;

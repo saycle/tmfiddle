@@ -42,12 +42,29 @@
 </head>
 
 <body>
-<select id="example-selector">
-	<option>&lt; select example &gt;</option>
-	<option value="data/addOne.json">One-bit addition</option>
-	<option value="data/multiply-unary.json">Multiply (unary)</option>
-</select>
-<div class="statemachine-demo" id="canvas">
+<nav class="navbar navbar-default">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">we <i class="glyphicon glyphicon-heart"></i> machines</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="#">Design a machine</a></li>
+			</ul>
+			<form class="navbar-form navbar-left">
+				<div class="form-group">
+					<select id="example-selector" class="form-control">
+						<option>&lt; load example &gt;</option>
+						<option value="data/addOne.json">One-bit addition</option>
+						<option value="data/multiply-unary.json">Multiply (unary)</option>
+					</select>
+				</div>
+			</form>
+		</div>
+	</div>
+</nav>
+
+<div class="statemachine-demo" id="canvas" style="position:relative;">
 </div>
 
 <pre id="code"></pre>

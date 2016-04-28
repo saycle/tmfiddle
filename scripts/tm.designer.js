@@ -156,7 +156,7 @@ MachineCanvas.prototype._initializeJsPlumb = function() {
 		else {
 			configuration.states[stateName] = {
 				presentation: {
-					position: {x: e.offsetX, y: e.offsetY}
+					position: {x: e.offsetX - instance.getContainer().offsetY, y: e.offsetY}
 				},
 				connections: {},
 				accepted: false,
@@ -195,7 +195,7 @@ var State = function(name, model, machineCanvas) {
 	machineCanvas._instance.draggable(d, {
 		drag: function(draggedWrapper) {
 			model.presentation.position.x = $(draggedWrapper.el).offset().left;
-			model.presentation.position.y = $(draggedWrapper.el).offset().top;
+			model.presentation.position.y = $(draggedWrapper.el).offset().top - $(machineCanvas._instance.getContainer()).offset().top;
 		}
 	});
 
