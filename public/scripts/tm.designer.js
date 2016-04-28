@@ -123,7 +123,7 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
         else {
             configuration.states[stateName] = {
                 presentation: {
-                    position: {x: e.offsetX - instance.getContainer().offsetY, y: e.offsetY}
+                    position: {x: e.offsetX, y: e.offsetY}
                 },
                 connections: {},
                 accepted: false,
@@ -240,6 +240,6 @@ var State = function (name, model, machineCanvas) {
 
 window.setInterval(function () {
     $("#code").html(JSON.stringify(configuration, null, 2));
-    if(configuration != null)
+    if(configuration != null && configuration != undefined)
         localStorage.configuration = JSON.stringify(configuration);
 }, 1000);
