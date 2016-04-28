@@ -1,9 +1,101 @@
 
+var configurationExample = {
+	states: {
+		'q0': {
+			presentation: {
+				position: { x: 100, y: 100 }
+			},
+			connections: {
+				'0': {
+					write: '0',
+					move: 'R',
+					newState: 'q0'
+				},
+				'1': {
+					write: '1',
+					move: 'R',
+					newState: 'q0'
+				},
+				' ': {
+					write: ' ',
+					move: 'L',
+					newState: 'q1'
+				}
+			},
+			accepted: false
+		},
+		'q1': {
+			presentation: {
+				position: { x: 300, y: 100 }
+			},
+			connections: {
+				'0': {
+					write: '1',
+					move: 'R',
+					newState: 'q2'
+				},
+				'1': {
+					write: '0',
+					move: 'L',
+					newState: 'q1'
+				},
+				' ': {
+					write: '1',
+					move: 'R',
+					newState: 'q2'
+				}
+			},
+			accepted: false,
+		},
+		'q2': {
+			presentation: {
+				position: { x: 500, y: 100 }
+			},
+			connections: {
+			},
+			accepted: true,
+		}
+	},
+	startState: 'q0'
+};
 
-jsPlumb.ready(function () {
+// Enable persistent configuration
+var configuration = localStorage.configuration ? JSON.parse(localStorage.configuration) : configurationExample;
 
-	// setup some defaults for jsPlumb.
-	var instance = jsPlumb.getInstance({
+var MachineCanvas = function() {
+	var self = this;
+	window.states = self.states;
+	self._canvas = document.getElementById("canvas");
+	self._instance = null;
+	self._initializeJsPlumb();
+
+	// Load initial configuration
+	jQuery.each(configuration.states, function(i,s) {
+		self.addState(i, s);
+	});
+
+	// Connect states
+	jQuery.each(configuration.states, function(i,s) {
+		jQuery.each(s.connections, function(k, c) {
+			var connection = self._instance.connect({
+				source: i,
+				target: c.newState,
+				type: 'basic'
+			});
+			var label = k + '/' + c.write + "," + c.move;
+			//label = label.replace(/ /g, '_'); // replace blank chars
+			connection.getOverlay("label").setLabel(label);
+		});
+	});
+};
+
+MachineCanvas.prototype.addState = function(name, model) {
+	var state = new State(name, model, this);
+};
+
+MachineCanvas.prototype._initializeJsPlumb = function() {
+	var machineCanvas = this;
+	var instance = machineCanvas._instance = jsPlumb.getInstance({
 		Endpoint: ["Dot", {radius: 2}],
 		Connector:"StateMachine",
 		HoverPaintStyle: {strokeStyle: "#1e8151", lineWidth: 2 },
@@ -18,21 +110,10 @@ jsPlumb.ready(function () {
 		],
 		Container: "canvas"
 	});
-
 	instance.registerConnectionType("basic", { anchor:"Continuous", connector:"StateMachine" });
 
-	window.jsp = instance;
-
-	var canvas = document.getElementById("canvas");
-	var windows = jsPlumb.getSelector(".statemachine-demo .w");
-
-	// bind a click listener to each connection; the connection is deleted. you could of course
-	// just do this: jsPlumb.bind("click", jsPlumb.detach), but I wanted to make it clear what was
-	// happening.
 	instance.bind("click", function (c) {
-		var connectionName = null;
-		while(!connectionName)
-			connectionName = prompt("Enter connection specs (example: 1/1,L for read 1, write 1, direction L)")
+		var connectionName = promptConnectionName(c.getOverlay("label").getLabel());
 		c.getOverlay("label").setLabel(connectionName);
 	});
 
@@ -40,104 +121,114 @@ jsPlumb.ready(function () {
 		instance.detach(c);
 	});
 
-	// bind a connection listener. note that the parameter passed to this function contains more than
-	// just the new connection - see the documentation for a full list of what is included in 'info'.
-	// this listener sets the connection's internal
-	// id as the label overlay's text.
-	instance.bind("connection", function (info) {
-		var connectionName = prompt("Enter connection specs (example: 1/1,L for read 1, write 1, direction L)");
-		info.connection.getOverlay("label").setLabel(connectionName);
+	instance.bind("connection", function (info, e) {
+		if(e != null) // if event is null, the connection has been created programmatically
+			info.source.addConnection(info);
 	});
 
-	// bind a double click listener to "canvas"; add new node when this occurs.
-	jsPlumb.on(canvas, "dblclick", function(e) {
-		newNode(e.offsetX, e.offsetY);
+	instance.bind("connectionDetached", function(info) {
+		info.source.removeConnection(info);
 	});
 
-	//
-	// initialise element as connection targets and source.
-	//
-	var initNode = function(el) {
-
-		// initialise draggable elements.
-		instance.draggable(el);
-
-		instance.makeSource(el, {
-			filter: ".ep",
-			anchor: "Continuous",
-			connectorStyle: { strokeStyle: "#5c96bc", lineWidth: 2, outlineColor: "transparent", outlineWidth: 4 },
-			connectionType:"basic",
-			extract:{
-				"action":"the-action"
-			},
-			maxConnections: 8,
-			onMaxConnections: function (info, e) {
-				alert("Maximum connections (" + info.maxConnections + ") reached");
-			}
-		});
-
-		instance.makeTarget(el, {
-			dropOptions: { hoverClass: "dragHover" },
-			anchor: "Continuous",
-			allowLoopback: true
-		});
-		console.log("jsPlumbDemoNodeAdded");
-		// this is not part of the core demo functionality; it is a means for the Toolkit edition's wrapped
-		// version of this demo to find out about new nodes being added.
-		//
-		instance.fire("jsPlumbDemoNodeAdded", el);
-
-		$(el).on('dblclick', function(e) {
-			e.stopPropagation();
-			var newName = prompt('Rename state to');
-			el.id = newName;
-			el.innerHTML = newName + "<div class=\"ep\"></div>";
-		});
-	};
-
-	var newNode = function(x, y) {
-		var id = prompt('Enter the state name (example: q7)');
-		var d = document.createElement("div");
-		//var id = jsPlumbUtil.uuid();
-		d.className = "w";
-		d.id = id;
-		d.innerHTML = id + "<div class=\"ep\"></div>";
-		d.style.left = x + "px";
-		d.style.top = y + "px";
-		instance.getContainer().appendChild(d);
-		initNode(d);
-		return d;
-	};
-
-	// suspend drawing and initialise.
-	instance.batch(function () {
-		for (var i = 0; i < windows.length; i++) {
-			initNode(windows[i], true);
+	jsPlumb.on(this._canvas, "dblclick", function(e) {
+		var stateName = prompt('Enter the state name (example: q7)');
+		if(configuration.states[stateName] != null)
+			alert("State with the id " + stateName + " already exists.");
+		else {
+			configuration.states[stateName] = {
+				presentation: {
+					position: {x: e.offsetX, y: e.offsetY}
+				},
+				connections: {},
+				accepted: false,
+			};
+			machineCanvas.addState(stateName, configuration.states[stateName]);
 		}
-		// and finally, make a few connections
-		/*instance.connect({ source: "q0", target: "q1", type:"basic" });
-		instance.connect({ source: "q1", target: "q2", type:"basic" });
-		instance.connect({ source: "q2", target: "q3", type:"basic" });
-
-		instance.connect({
-			source:"q3",
-			target:"q4",
-			type:"basic"
-		});*/
 	});
 
-	jsPlumb.fire("jsPlumbDemoLoaded", instance);
+};
 
 
-	window.setInterval(function() {
-		console.log(instance);
+var promptConnectionName = function(defaultValue) {
+	var connectionName = null;
+	while(!connectionName || !/^.\/.,[LR]$/.test(connectionName))
+		connectionName = prompt("Enter connection specs (example: 1/1,L for read 1, write 1, direction L)", defaultValue);
+	return connectionName;
+};
 
-		/*var code = $.map(windows, function(i,e) {
-			return i.cssClass
-		});
-
-		$("#code").text(JSON.stringify(code));
-		*/
-
-	}, 5000);
+jsPlumb.ready(function () {
+	var machineCanvas = new MachineCanvas();
 });
+
+var State = function(name, model, machineCanvas) {
+	var self = this;
+
+	var d = document.createElement("div");
+	d.model = model;
+
+	d.className = "w";
+	d.id = name;
+	d.innerHTML = name + "<div class=\"ep\"></div>";
+	d.style.left = model.presentation.position.x + "px";
+	d.style.top = model.presentation.position.y + "px";
+	machineCanvas._instance.getContainer().appendChild(d);
+
+	machineCanvas._instance.draggable(d, {
+		drag: function(draggedWrapper) {
+			model.presentation.position.x = $(draggedWrapper.el).offset().left;
+			model.presentation.position.y = $(draggedWrapper.el).offset().top;
+		}
+	});
+
+	machineCanvas._instance.makeSource(d, {
+		filter: ".ep",
+		anchor: "Continuous",
+		connectorStyle: { strokeStyle: "#5c96bc", lineWidth: 2, outlineColor: "transparent", outlineWidth: 4 },
+		connectionType:"basic",
+		extract:{
+			"action":"the-action"
+		},
+		maxConnections: -1
+	});
+
+	machineCanvas._instance.makeTarget(d, {
+		dropOptions: { hoverClass: "dragHover" },
+		anchor: "Continuous",
+		allowLoopback: true
+	});
+
+	$(d).on('dblclick', function(e) {
+		e.stopPropagation();
+		var newName = prompt('Rename state to');
+
+		configuration.states[newName] = configuration.states[d.id];
+		delete configuration.states[d.id];
+		d.id = newName;
+		d.innerHTML = newName + "<div class=\"ep\"></div>";
+
+	});
+
+	d.addConnection = function(info) {
+
+		var connectionName = null;
+		while(!connectionName || model.connections[connectionName.split('/')[0]] != null)
+			connectionName = promptConnectionName('');
+
+		info.connection.getOverlay("label").setLabel(connectionName);
+		model.connections[connectionName.split('/')[0]] = {
+			write: connectionName.split('/')[1].split(',')[0],
+			move: connectionName.split('/')[1].split(',')[1],
+			newState: info.target.id
+		};
+
+	};
+
+	d.removeConnection = function(info) {
+		delete model.connections[info.connection.getOverlay("label").getLabel().split('/')[0]];
+	};
+};
+
+window.setInterval(function() {
+	$("#code").html( JSON.stringify(configuration, null, 2));
+	localStorage.configuration = JSON.stringify(configuration);
+}, 1000);
