@@ -14,9 +14,9 @@
 
 
 	<script src="bower_components/jquery/dist/jquery.min.js"></script>
-	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script src="bower_components/jquery.autotab/js/jquery.autotab.min.js"></script>
 	<script src="bower_components/jsPlumb/dist/js/jsPlumb-2.1.0-min.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
 	<script src="scripts/tm.machine.js"></script>
 	<script src="scripts/tm.tape.js"></script>
@@ -36,6 +36,8 @@
 			$("#executeAllButton").click(function() {
 				machine.calculateAll(10);
 			});
+
+			$("#showCodeButton").click(function() { $('.collapse').collapse("toggle"); });
 		});
 	</script>
 
@@ -67,11 +69,18 @@
 <div class="statemachine-demo" id="canvas" style="position:relative;">
 </div>
 
-<pre id="code"></pre>
+<button id="showCodeButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#codeCollapse">Show Code</button>
+<div id="codeCollapse" class="collapse">
+	<pre class="collapse" id="code"></pre>
+</div>
+
+
+<p>
 <div id="input-container">
 	<div id="tape">
 	</div>
 </div>
+</p>
 <button type="button" class="btn btn-success" id="executeStepButton">Execute Step</button>
 <button type="button" class="btn btn-warning" id="executeAnimatedButton">Execute Animated</button>
 <button type="button" class="btn btn-danger" id="executeAllButton">Execute All</button>
