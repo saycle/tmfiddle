@@ -17,6 +17,15 @@ html {
     -o-transition: all 1.4s ease;
     transition: all 1.4s ease;
 }
+
+.tm-designer-tools {
+    margin-left: 15px;
+}
+
+#machine-wrapper {
+    margin: 15px;
+}
+
 #machine-container {
     margin-top: 10px;
     height: 60px;
@@ -28,6 +37,10 @@ html {
 
 #stepCount {
     font-weight: bold;
+}
+
+#input-container {
+
 }
 
 .left {

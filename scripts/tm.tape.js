@@ -1,11 +1,6 @@
 function Tape(machine) {
     this.machine = machine;
-	this.columns = [];
-    this.input = "";
-    this.readerWriter = [];
-    this.addColumn();
-    this.addColumn();
-    this.position(0);
+    this.clear();
 }
 
 Tape.prototype.getInput = function() {
@@ -59,11 +54,25 @@ Tape.prototype.setFinished = function(status) {
 };
 
 Tape.prototype.reset = function() {
-    this.columns.forEach(function(column) {
+    this.columns.forEach(function (column) {
         column.inputCell.removeClass('accepted');
         column.inputCell.removeClass('failed');
     });
     this.position(1);
+};
+
+Tape.prototype.clear = function() {
+    if(this.columns) {
+        this.columns.forEach(function(column) {
+            column.element.remove();
+        });
+    }
+    this.columns = [];
+    this.input = "";
+    this.readerWriter = [];
+    this.addColumn();
+    this.addColumn();
+    this.position(0);
 };
 
 Tape.prototype.addColumn = function(prepend) {

@@ -1,5 +1,4 @@
 function Machine() {
-    var self = this;
     this.tape = new Tape(this);
     this.reset();
     this.tape.position(0);
@@ -10,11 +9,17 @@ Machine.prototype.reset = function() {
     this.result = null;
     this.setConfiguration();
     this.tape.reset();
-    this.stepCount = 0;
+    this.setStepCount(true);
     $(".w").removeClass("failed");
     $(".w").removeClass("accepted");
+    $(".executeButton").prop('disabled', false);
     this.setCurrentState(this.configuration.startState);
 };
+
+Machine.prototype.clear = function(){
+    this.reset();
+    this.tape.clear();
+}
 
 Machine.prototype.stop = function() {
     clearInterval(this.calculationInterval);
@@ -30,7 +35,7 @@ Machine.prototype.calculateAll = function(interval) {
 };
 
 Machine.prototype.calculateStep = function() {
-    this.incrementStepCount();
+    this.setStepCount();
     this.running = true;
     if(!this.configuration) {
         this.setConfiguration();
@@ -46,8 +51,12 @@ Machine.prototype.calculateStep = function() {
     return null;
 };
 
-Machine.prototype.incrementStepCount = function() {
-    this.stepCount++;
+Machine.prototype.setStepCount = function(reset) {
+    if(reset) {
+        this.stepCount = 0;
+    } else {
+        this.stepCount++;
+    }
     $("#stepCount").text(this.stepCount);
 };
 
@@ -62,6 +71,7 @@ Machine.prototype.setFinished = function(status) {
     this.tape.setFinished(status);
     this.stop();
     $("#" + this.currentState).addClass(status ? "accepted" : "failed");
+    $(".executeButton").prop('disabled', true);
     return this.result;
 }
 

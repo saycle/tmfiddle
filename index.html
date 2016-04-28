@@ -31,10 +31,16 @@
                 machine.calculateStep();
             });
             $("#executeAnimatedButton").click(function () {
-                machine.calculateAll(1500);
+                machine.calculateAll(500);
             });
             $("#executeAllButton").click(function () {
                 machine.calculateAll(10);
+            });
+            $("#resetButton").click(function () {
+                machine.reset();
+            });
+            $("#clearButton").click(function () {
+                machine.clear();
             });
 
             $("#showCodeButton").click(function () {
@@ -47,58 +53,68 @@
 
 <body>
 <nav class="navbar navbar-default">
-	<div class="container-fluid">
-		<div class="navbar-header">
-			<a class="navbar-brand" href="#">we <i class="glyphicon glyphicon-heart"></i> machines</a>
-		</div>
-		<div>
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="#">Design a machine</a></li>
-			</ul>
-			<form class="navbar-form navbar-left">
-				<div class="form-group">
-					<select id="example-selector" class="form-control">
-						<option>&lt; load example &gt;</option>
-						<option value="data/addOne.json">One-bit addition</option>
-						<option value="data/multiply-unary.json">Multiply (unary)</option>
-						<option value="data/empty.json">Empty (new machine)</option>
-					</select>
-				</div>
-			</form>
-		</div>
-	</div>
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">we <i class="glyphicon glyphicon-heart"></i> machines</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Design a machine</a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <select id="example-selector" class="form-control">
+                        <option>&lt; load example &gt;</option>
+                        <option value="data/addOne.json">One-bit addition</option>
+                        <option value="data/multiply-unary.json">Multiply (unary)</option>
+                        <option value="data/empty.json">Empty (new machine)</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
 </nav>
 
-<div class="tm-designer-tools">
-	Tools:
-	<a id="tm-designer-tool-move" class="btn btn-primary tm-designer-tool" href="#" title="Move states" tool="move"><i class="glyphicon glyphicon-move"></i></a>
-	<a id="tm-designer-tool-edit" class="btn btn-default tm-designer-tool" href="#" title="Edit states or connections" tool="edit"><i class="glyphicon glyphicon-pencil"></i></a>
-	<a id="tm-designer-tool-remove" class="btn btn-default tm-designer-tool" href="#" title="Remove states or connections" tool="remove"><i class="glyphicon glyphicon-remove"></i></a>
-</div>
-
-<div class="statemachine-demo" id="canvas" style="position:relative;">
-</div>
-
-<button id="showCodeButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#codeCollapse">Show
-    Code
-</button>
-<div id="codeCollapse" class="collapse">
-    <pre class="collapse" id="code"></pre>
-</div>
-
-<div id="machine-container">
-    <div class="left">
-        <button type="button" class="btn btn-success" id="executeStepButton">Execute Step</button>
-        <button type="button" class="btn btn-warning" id="executeAnimatedButton">Execute Animated</button>
-        <button type="button" class="btn btn-danger" id="executeAllButton">Execute All</button>
+<div id="design-wrapper">
+    <div class="tm-designer-tools">
+        Tools:
+        <a id="tm-designer-tool-move" class="btn btn-primary tm-designer-tool" href="#" title="Move states" tool="move"><i
+                class="glyphicon glyphicon-move"></i></a>
+        <a id="tm-designer-tool-edit" class="btn btn-default tm-designer-tool" href="#"
+           title="Edit states or connections" tool="edit"><i class="glyphicon glyphicon-pencil"></i></a>
+        <a id="tm-designer-tool-remove" class="btn btn-default tm-designer-tool" href="#"
+           title="Remove states or connections" tool="remove"><i class="glyphicon glyphicon-remove"></i></a>
     </div>
-    <div class="right" id="stepCountContainer">
-        Steps: <span id="stepCount"></span>
+
+    <div class="statemachine-demo" id="canvas" style="position:relative;">
     </div>
 </div>
 
-<div id="input-container">
-    <div id="tape">
+<div id="machine-wrapper">
+    <button id="showCodeButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#codeCollapse">
+        Show
+        Code
+    </button>
+    <div id="codeCollapse" class="collapse">
+        <pre class="collapse" id="code"></pre>
+    </div>
+
+    <div id="machine-container">
+        <div class="left">
+            <button type="button" class="executeButton btn btn-success" id="executeStepButton">Execute Step</button>
+            <button type="button" class="executeButton btn btn-warning" id="executeAnimatedButton">Execute Animated</button>
+            <button type="button" class="executeButton btn btn-danger" id="executeAllButton">Execute All</button>
+            <button type="button" class="btn btn-default" id="resetButton">Reset</button>
+            <button type="button" class="btn btn-default" id="clearButton">Clear</button>
+        </div>
+        <div class="right" id="stepCountContainer">
+            Steps: <span id="stepCount"></span>
+        </div>
+    </div>
+
+    <div id="input-container">
+        <div id="tape">
+        </div>
     </div>
 </div>
 </body>
