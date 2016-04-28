@@ -10,6 +10,7 @@ Machine.prototype.reset = function() {
     this.result = null;
     this.setConfiguration();
     this.tape.reset();
+    this.stepCount = 0;
     $(".w").removeClass("failed");
     $(".w").removeClass("accepted");
     this.setCurrentState(this.configuration.startState);
@@ -29,6 +30,7 @@ Machine.prototype.calculateAll = function(interval) {
 };
 
 Machine.prototype.calculateStep = function() {
+    this.incrementStepCount();
     this.running = true;
     if(!this.configuration) {
         this.setConfiguration();
@@ -42,6 +44,11 @@ Machine.prototype.calculateStep = function() {
         return this.setFinished(this.configuration.states[this.currentState].accepted);
     }
     return null;
+};
+
+Machine.prototype.incrementStepCount = function() {
+    this.stepCount++;
+    $("#stepCount").text(this.stepCount);
 };
 
 Machine.prototype.setCurrentState = function(newState) {

@@ -17,3 +17,23 @@ html {
     -o-transition: all 1.4s ease;
     transition: all 1.4s ease;
 }
+#machine-container {
+    margin-top: 10px;
+    height: 60px;
+}
+
+#stepCountContainer {
+    font-size: 24px;
+}
+
+#stepCount {
+    font-weight: bold;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
