@@ -2,87 +2,96 @@
 
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-	<title>we-like-machines</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>we-like-machines</title>
 
-	<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
-	<link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet" type="text/css">
 
-	<link rel="stylesheet" href="styles/site.css"/>
-	<link rel="stylesheet" href="styles/machine.css"/>
-	<link rel="stylesheet" href="styles/designer.css"/>
+    <link rel="stylesheet" href="styles/site.css"/>
+    <link rel="stylesheet" href="styles/machine.css"/>
+    <link rel="stylesheet" href="styles/designer.css"/>
 
 
-	<script src="bower_components/jquery/dist/jquery.min.js"></script>
-	<script src="bower_components/jquery.autotab/js/jquery.autotab.min.js"></script>
-	<script src="bower_components/jsPlumb/dist/js/jsPlumb-2.1.0-min.js"></script>
-	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery.autotab/js/jquery.autotab.min.js"></script>
+    <script src="bower_components/jsPlumb/dist/js/jsPlumb-2.1.0-min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
-	<script src="scripts/tm.machine.js"></script>
-	<script src="scripts/tm.tape.js"></script>
-	<script src="scripts/tm.column.js"></script>
-	<script src="scripts/tm.designer.js"></script>
+    <script src="scripts/tm.machine.js"></script>
+    <script src="scripts/tm.tape.js"></script>
+    <script src="scripts/tm.column.js"></script>
+    <script src="scripts/tm.designer.js"></script>
 
-	<script>
-		var machine;
-		$(function() {
-			machine = new Machine();
-			$("#executeStepButton").click(function() {
-				machine.calculateStep();
-			});
-			$("#executeAnimatedButton").click(function() {
-				machine.calculateAll(1500);
-			});
-			$("#executeAllButton").click(function() {
-				machine.calculateAll(10);
-			});
+    <script>
+        var machine;
+        $(function () {
+            machine = new Machine();
+            $("#executeStepButton").click(function () {
+                machine.calculateStep();
+            });
+            $("#executeAnimatedButton").click(function () {
+                machine.calculateAll(1500);
+            });
+            $("#executeAllButton").click(function () {
+                machine.calculateAll(10);
+            });
 
-			$("#showCodeButton").click(function() { $('.collapse').collapse("toggle"); });
-		});
-	</script>
+            $("#showCodeButton").click(function () {
+                $('.collapse').collapse("toggle");
+            });
+        });
+    </script>
 
 </head>
 
 <body>
 <nav class="navbar navbar-default">
-	<div class="container-fluid">
-		<div class="navbar-header">
-			<a class="navbar-brand" href="#">we <i class="glyphicon glyphicon-heart"></i> machines</a>
-		</div>
-		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="#">Design a machine</a></li>
-			</ul>
-			<form class="navbar-form navbar-left">
-				<div class="form-group">
-					<select id="example-selector" class="form-control">
-						<option>&lt; load example &gt;</option>
-						<option value="data/addOne.json">One-bit addition</option>
-						<option value="data/multiply-unary.json">Multiply (unary)</option>
-					</select>
-				</div>
-			</form>
-		</div>
-	</div>
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">we <i class="glyphicon glyphicon-heart"></i> machines</a>
+        </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Design a machine</a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <select id="example-selector" class="form-control">
+                        <option>&lt; load example &gt;</option>
+                        <option value="data/addOne.json">One-bit addition</option>
+                        <option value="data/multiply-unary.json">Multiply (unary)</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
 </nav>
 
 <div class="statemachine-demo" id="canvas" style="position:relative;">
 </div>
 
-<button id="showCodeButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#codeCollapse">Show Code</button>
+<button id="showCodeButton" type="button" class="btn btn-info" data-toggle="collapse" data-target="#codeCollapse">Show
+    Code
+</button>
 <div id="codeCollapse" class="collapse">
-	<pre class="collapse" id="code"></pre>
+    <pre class="collapse" id="code"></pre>
 </div>
 
+<div id="machine-container">
+    <div class="left">
+        <button type="button" class="btn btn-success" id="executeStepButton">Execute Step</button>
+        <button type="button" class="btn btn-warning" id="executeAnimatedButton">Execute Animated</button>
+        <button type="button" class="btn btn-danger" id="executeAllButton">Execute All</button>
+    </div>
+    <div class="right" id="stepCountContainer">
+        Steps: <span id="stepCount"></span>
+    </div>
+</div>
 
-<p>
 <div id="input-container">
-	<div id="tape">
-	</div>
+    <div id="tape">
+    </div>
 </div>
-</p>
-<button type="button" class="btn btn-success" id="executeStepButton">Execute Step</button>
-<button type="button" class="btn btn-warning" id="executeAnimatedButton">Execute Animated</button>
-<button type="button" class="btn btn-danger" id="executeAllButton">Execute All</button>
 </body>
 </html>
