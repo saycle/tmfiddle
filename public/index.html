@@ -5,7 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <title>we-like-machines</title>
 
-        <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.min.css"/>
         <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700" rel="stylesheet" type="text/css">
 
         <link rel="stylesheet" href="styles/site.css"/>
@@ -13,10 +13,11 @@
         <link rel="stylesheet" href="styles/designer.css"/>
 
 
-        <script src="bower_components/jquery/dist/jquery.min.js"></script>
-        <script src="bower_components/jquery.autotab/js/jquery.autotab.min.js"></script>
-        <script src="bower_components/jsPlumb/dist/js/jsPlumb-2.1.0-min.js"></script>
-        <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../bower_components/jquery.autotab/js/jquery.autotab.min.js"></script>
+        <script src="../bower_components/jsPlumb/dist/js/jsPlumb-2.1.0-min.js"></script>
+        <script src="../bower_components/bootbox.js/bootbox.js"></script>
+        <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
         <script src="scripts/tm.machine.js"></script>
         <script src="scripts/tm.tape.js"></script>
@@ -118,40 +119,6 @@
 
             <div id="input-container">
                 <div id="tape">
-                </div>
-            </div>
-        </div>
-        <div class="modal fade" id="editConnectionModal" tabindex="-1" role="dialog" aria-labelledby="editConnectionModalLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="editConnectionModalLabel">Edit connection</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form>
-                            <div class="form-group">
-                                <label for="connection-read" class="control-label">Read:</label>
-                                <input type="text" class="form-control" id="connection-read">
-                            </div>
-                            <div class="form-group">
-                                <label for="connection-write" class="control-label">Write:</label>
-                                <input type="text" class="form-control" id="connection-write">
-                            </div>
-                            <div class="form-group">
-                                <label for="connection-move" class="control-label">Read:</label>
-                                <select class="form-control" id="connection-move">
-                                    <option>L</option>
-                                    <option>R</option>
-                                    <option>S</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary">Save</button>
-                    </div>
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
 // Enable persistent configuration
-var configuration = JSON.parse(localStorage.configuration) || { states: {} };
+var configuration = JSON.parse(localStorage.configuration) || {states: {}};
 var MachineCanvas = function () {
 
     var self = this;
@@ -11,7 +11,7 @@ var MachineCanvas = function () {
     self.initState();
 
     $(document).ready(function () {
-        if(JSON.parse(localStorage.configuration))
+        if (JSON.parse(localStorage.configuration))
             $("#example-selector").val("local");
         $("#example-selector-local").prop('disabled', !JSON.parse(localStorage.configuration));
 
@@ -75,7 +75,7 @@ MachineCanvas.prototype.addState = function (name, model) {
 MachineCanvas.prototype._initializeJsPlumb = function () {
     var machineCanvas = this;
     var instance = machineCanvas._instance = jsPlumb.getInstance({
-        Endpoint: ["Dot", {radius: 2}],
+        Endpoint: ["Dot", {radius: 5}],
         Connector: "StateMachine",
         HoverPaintStyle: {strokeStyle: "#1e8151", lineWidth: 2},
         ConnectionOverlays: [
@@ -96,8 +96,7 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
         if (machineCanvas.tool == 'remove')
             instance.detach(c);
         else {
-            var connectionName = promptConnectionName(c.getOverlay("label").getLabel());
-            c.getOverlay("label").setLabel(connectionName);
+            var connectionName = promptConnectionName(c.getOverlay("label").getLabel(), c);
         }
     });
 
@@ -114,13 +113,7 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     });
 
     jsPlumb.on(this._canvas, "dblclick", function (e) {
-        var stateName = prompt('Enter the state name (example: q7)');
-        if(stateName == null)
-            return;
-
-        if (configuration.states[stateName] != null)
-            alert("State with id " + stateName + " already exists.");
-        else {
+        promtStateName(false, function (stateName) {
             configuration.states[stateName] = {
                 presentation: {
                     position: {x: e.offsetX, y: e.offsetY}
@@ -129,26 +122,82 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
                 accepted: false,
             };
             machineCanvas.addState(stateName, configuration.states[stateName]);
-        }
+        });
     });
 
 };
 
 
-var promptConnectionName = function (defaultValue) {
-    var connectionName = null;
-    var read = defaultValue.split('/')[0];
-    var write = defaultValue.split('/')[1].split(',')[0];
-    var move = defaultValue.split('/')[1].split(',')[1];
-    $("#connection-read").val(read)
-    $("#connection-write").val(write);
-    $("#connection-move").val(move);
-    $("#editConnectionModal").modal("show");
-    //while (!connectionName || !/^.\/.,[LR]$/.test(connectionName)) {
-    //connectionName = prompt("Enter connection specs (example: 1/1,L for read 1, write 1, direction L)", defaultValue);
-    //}
-    return connectionName;
+var promptConnectionName = function (value, connection, callback) {
+    var read = '';
+    var write = '';
+    var move = '';
+
+    if (value) {
+        read = value.split('/')[0];
+        write = value.split('/')[1].split(',')[0];
+        move = value.split('/')[1].split(',')[1];
+    }
+    var label = connection.getOverlay("label");
+    bootbox.dialog({
+            title: "Edit connection",
+            message: '<div class="modal-body"><form class="form-horizontal" id="editConnectionForm"><div class="row">' +
+            '<div class="col-sm-4"><div class="form-group"><label for="connection-read" class="control-label">Read:</label><input type="text" class="form-control" id="connection-read" maxlength="1" value="' + read + '" /></div></div>' +
+            '<div class="col-sm-4"><div class="form-group"><label for="connection-write" class="control-label">Write:</label><input type="text" class="form-control" id="connection-write" maxlength="1" value="' + write + '" /></div></div>' +
+            '<div class="col-sm-4"><div class="form-group"><label for="connection-move" class="control-label">Read:</label><select class="form-control" id="connection-move" value="' + move + '" ><option>L</option><option>R</option><option>S</option></select></div></div>' +
+            '</div></form></div>',
+            buttons: {
+                success: {
+                    label: "Save",
+                    className: "btn-success",
+                    callback: function () {
+                        var connectionName = $("#connection-read").val() + '/' + $("#connection-write").val() + ',' + $("#connection-move").val();
+                        label.setLabel(connectionName);
+                        if (callback) {
+                            callback(connectionName);
+                        }
+                    }
+                }
+            }
+        }
+    );
 };
+
+
+var promtStateName = function (value, callback) {
+    var name = value ? value : '';
+    bootbox.dialog({
+            title: "Edit state",
+            message: '<div class="modal-body"><form class="form-horizontal" id="editStateForm"><div class="row">' +
+            '<div class="col-sm-12"><div class="form-group"><label for="state-name" class="control-label">Name:</label><input type="text" class="form-control" id="state-name" value="' + name + '" onkeyup="checkStateNameEdit(' + value + ')" /></div></div>' +
+            '<p id="invalid-state-name">The state name is not valid or already in use</p>' +
+            '</div></form></div>',
+            buttons: {
+                success: {
+                    label: "Save",
+                    className: "btn-success state-btn",
+                    callback: function () {
+                        var stateName = $("#state-name").val();
+                        if (callback) {
+                            callback(stateName);
+                        }
+                    }
+                }
+            }
+        }
+    );
+};
+
+function checkStateNameEdit(original) {
+    var stateName = $("#state-name").val();
+    if(stateName == null || stateName == '' || (configuration.states[stateName] != null && stateName != $(original).attr('id'))) {
+        $(".state-btn").prop('disabled', true);
+        $("#invalid-state-name").show();
+    } else {
+        $(".state-btn").prop('disabled', false);
+        $("#invalid-state-name").hide();
+    }
+}
 
 jsPlumb.ready(function () {
     var machineCanvas = new MachineCanvas();
@@ -200,13 +249,12 @@ var State = function (name, model, machineCanvas) {
         e.stopPropagation();
 
         if (machineCanvas.tool == 'edit') {
-            var newName = prompt('Rename state to', d.id);
-            if (newName == d.id || newName == null)
-                return;
-            configuration.states[newName] = configuration.states[d.id];
-            delete configuration.states[d.id];
-            d.id = newName;
-            d.innerHTML = newName + "<div class=\"ep\"></div>";
+            promtStateName(d.id, function (newName) {
+                configuration.states[newName] = configuration.states[d.id];
+                delete configuration.states[d.id];
+                d.id = newName;
+                d.innerHTML = newName + "<div class=\"ep\"></div>";
+            });
         }
         else if (machineCanvas.tool == 'remove') {
             machineCanvas._instance.detachAllConnections(d.id);
@@ -219,18 +267,15 @@ var State = function (name, model, machineCanvas) {
     });
 
     d.addConnection = function (info) {
-
-        var connectionName = null;
-        while (!connectionName || model.connections[connectionName.split('/')[0]] != null)
-            connectionName = promptConnectionName('');
-
-        info.connection.getOverlay("label").setLabel(connectionName);
-        model.connections[connectionName.split('/')[0]] = {
-            write: connectionName.split('/')[1].split(',')[0],
-            move: connectionName.split('/')[1].split(',')[1],
-            newState: info.target.id
-        };
-
+        console.log('addConnection');
+        promptConnectionName(false, info.connection, function (connectionName) {
+            console.log('test');
+            model.connections[connectionName.split('/')[0]] = {
+                write: connectionName.split('/')[1].split(',')[0],
+                move: connectionName.split('/')[1].split(',')[1],
+                newState: info.target.id
+            };
+        });
     };
 
     d.removeConnection = function (info) {
@@ -240,6 +285,6 @@ var State = function (name, model, machineCanvas) {
 
 window.setInterval(function () {
     $("#code").html(JSON.stringify(configuration, null, 2));
-    if(configuration != null && configuration != undefined)
+    if (configuration != null && configuration != undefined)
         localStorage.configuration = JSON.stringify(configuration);
 }, 1000);

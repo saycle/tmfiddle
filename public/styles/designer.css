@@ -38,7 +38,7 @@
 }
 
 .aLabel.jsplumb-hover, .jsplumb-source-hover, .jsplumb-target-hover {
-    background-color: #1e8151;
+    background-color: #055599;
     color: white;
 }
 
@@ -83,8 +83,25 @@
 
 path, .jsplumb-endpoint { cursor:pointer; }
 
+.jsplumb-connector:hover path {
+    
+}
+
 .statemachine-demo { height:500px; border:2px solid #DDD; border-width:2px 0 2px 0; }
 
 pre {
 
+}
+
+#editConnectionForm input {
+    width: 40px;
+}
+
+#editConnectionForm select {
+    width: 60px;
+}
+
+#invalid-state-name {
+    color: darkred;
+    display: none;
 }

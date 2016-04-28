@@ -27,6 +27,7 @@
   "dependencies": {
     "bootstrap": "3.3.6",
     "jsPlumb": "jsplumb#2.1.0",
-    "jquery.autotab": "1.9.2"
+    "jquery.autotab": "1.9.2",
+    "bootbox.js": "bootbox#^4.4.0"
   }
 }
