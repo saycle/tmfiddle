@@ -1,65 +1,5 @@
-var configurationExample = {
-    states: {
-        'q0': {
-            presentation: {
-                position: {x: 100, y: 100}
-            },
-            connections: {
-                '0': {
-                    write: '0',
-                    move: 'R',
-                    newState: 'q0'
-                },
-                '1': {
-                    write: '1',
-                    move: 'R',
-                    newState: 'q0'
-                },
-                ' ': {
-                    write: ' ',
-                    move: 'L',
-                    newState: 'q1'
-                }
-            },
-            accepted: false
-        },
-        'q1': {
-            presentation: {
-                position: {x: 300, y: 100}
-            },
-            connections: {
-                '0': {
-                    write: '1',
-                    move: 'R',
-                    newState: 'q2'
-                },
-                '1': {
-                    write: '0',
-                    move: 'L',
-                    newState: 'q1'
-                },
-                ' ': {
-                    write: '1',
-                    move: 'R',
-                    newState: 'q2'
-                }
-            },
-            accepted: false,
-        },
-        'q2': {
-            presentation: {
-                position: {x: 500, y: 100}
-            },
-            connections: {},
-            accepted: true,
-        }
-    },
-    startState: 'q0'
-};
-
 // Enable persistent configuration
-var configuration = localStorage.configuration ? JSON.parse(localStorage.configuration) : configurationExample;
-
+var configuration = JSON.parse(localStorage.configuration) || { states: {} };
 var MachineCanvas = function () {
 
     var self = this;
@@ -71,6 +11,10 @@ var MachineCanvas = function () {
     self.initState();
 
     $(document).ready(function () {
+        if(JSON.parse(localStorage.configuration))
+            $("#example-selector").val("local");
+        $("#example-selector-local").prop('disabled', !JSON.parse(localStorage.configuration));
+
         $("#example-selector").change(function () {
             $.ajax($(this).val()).done(function (res) {
                 configuration = res;
@@ -172,7 +116,7 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     jsPlumb.on(this._canvas, "dblclick", function (e) {
         var stateName = prompt('Enter the state name (example: q7)');
         if (configuration.states[stateName] != null)
-            alert("State with the id " + stateName + " already exists.");
+            alert("State with id " + stateName + " already exists.");
         else {
             configuration.states[stateName] = {
                 presentation: {
@@ -293,5 +237,6 @@ var State = function (name, model, machineCanvas) {
 
 window.setInterval(function () {
     $("#code").html(JSON.stringify(configuration, null, 2));
-    localStorage.configuration = JSON.stringify(configuration);
+    if(configuration != null)
+        localStorage.configuration = JSON.stringify(configuration);
 }, 1000);
