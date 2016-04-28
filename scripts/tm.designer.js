@@ -153,16 +153,15 @@ MachineCanvas.prototype._initializeJsPlumb = function() {
 		// Connection click
 		if(machineCanvas.tool == 'remove')
 			instance.detach(c);
-		else {
+		else  {
 			var connectionName = promptConnectionName(c.getOverlay("label").getLabel());
 			c.getOverlay("label").setLabel(connectionName);
 		}
 	});
 
-	instance.bind("dblclick", function (c) {
+	/*instance.bind("dblclick", function (c) {
 		instance.detach(c);
-	});
-
+	});*/
 	instance.bind("connection", function (info, e) {
 		if(e != null) // if event is null, the connection has been created programmatically
 			info.source.addConnection(info);
