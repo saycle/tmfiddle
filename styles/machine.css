@@ -39,11 +39,3 @@
     -o-transition: all 0.8s ease;
     transition: all 0.8s ease;
 }
-.tape-input-cell.failed {
-    background-color: darkred;
-    color: white;
-}
-.tape-input-cell.accepted {
-    background-color: darkgreen;
-    color: white;
-}
