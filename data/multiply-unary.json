@@ -90,6 +90,11 @@
           "write": "Y",
           "move": "L",
           "newState": "q4"
+        },
+        "Y": {
+          "write": "Y",
+          "move": "R",
+          "newState": "q3"
         }
       },
       "accepted": false
@@ -133,10 +138,20 @@
         }
       },
       "connections": {
+        "1": {
+          "write": "1",
+          "move": "L",
+          "newState": "q4"
+        },
         "X": {
           "write": "X",
           "move": "R",
           "newState": "q2"
+        },
+        "Y": {
+          "write": "Y",
+          "move": "L",
+          "newState": "q4"
         }
       },
       "accepted": false
@@ -150,7 +165,7 @@
       },
       "connections": {
         "1": {
-          "write": "1",
+          "write": " ",
           "move": "R",
           "newState": "q6"
         },
@@ -160,7 +175,7 @@
           "newState": "q7"
         }
       },
-      "accepted": false
+      "accepted": true
     },
     "q7": {
       "presentation": {
@@ -176,7 +191,7 @@
           "newState": "q7"
         }
       },
-      "accepted": false
+      "accepted": true
     }
   },
   "startState": "q0"

@@ -190,8 +190,16 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
 
 var promptConnectionName = function (defaultValue) {
     var connectionName = null;
-    while (!connectionName || !/^.\/.,[LR]$/.test(connectionName))
-        connectionName = prompt("Enter connection specs (example: 1/1,L for read 1, write 1, direction L)", defaultValue);
+    var read = defaultValue.split('/')[0];
+    var write = defaultValue.split('/')[1].split(',')[0];
+    var move = defaultValue.split('/')[1].split(',')[1];
+    $("#connection-read").val(read)
+    $("#connection-write").val(write);
+    $("#connection-move").val(move);
+    $("#editConnectionModal").modal("show");
+    //while (!connectionName || !/^.\/.,[LR]$/.test(connectionName)) {
+    //connectionName = prompt("Enter connection specs (example: 1/1,L for read 1, write 1, direction L)", defaultValue);
+    //}
     return connectionName;
 };
 
