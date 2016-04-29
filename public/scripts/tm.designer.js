@@ -4,7 +4,6 @@ var MachineCanvas = function () {
 
     var self = this;
     self.tool = 'move';
-    window.states = self.states;
     self._canvas = document.getElementById("canvas");
     self._instance = null;
     self._initializeJsPlumb();
@@ -20,6 +19,7 @@ var MachineCanvas = function () {
                 configuration = res;
                 self._instance.reset();
                 self._canvas.innerHTML = "";
+                self._initializeJsPlumb();
                 self.initState();
                 setTimeout(function () {
                     jsPlumb.repaintEverything();
@@ -46,23 +46,25 @@ MachineCanvas.prototype.initState = function () {
     });
 
     // Connect states
-    jQuery.each(configuration.states, function (i, s) {
-        jQuery.each(s.connections, function (k, c) {
-            try {
+    self._instance.batch(function() {
+        jQuery.each(configuration.states, function (i, s) {
+            jQuery.each(s.connections, function (k, c) {
+                try {
 
-                var connection = self._instance.connect({
-                    source: i,
-                    target: c.newState,
-                    type: 'basic'
-                });
-                var label = k + '/' + c.write + "," + c.move;
-                //label = label.replace(/ /g, '_'); // replace blank chars
-                connection.getOverlay("label").setLabel(label);
-            }
-            catch (e) { // endpoint does not exist - remove connection
-                console.log(e);
-                delete s.connections[k];
-            }
+                    var connection = self._instance.connect({
+                        source: i,
+                        target: c.newState,
+                        type: 'basic'
+                    });
+                    var label = k + '/' + c.write + "," + c.move;
+                    //label = label.replace(/ /g, '_'); // replace blank chars
+                    connection.getOverlay("label").setLabel(label);
+                }
+                catch (e) { // endpoint does not exist - remove connection
+                    console.log(e);
+                    delete s.connections[k];
+                }
+            });
         });
     });
 
@@ -92,6 +94,7 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     instance.registerConnectionType("basic", {anchor: "Continuous", connector: "StateMachine"});
 
     instance.bind("click", function (c) {
+        console.log('connection clicked');
         // Connection click
         if (machineCanvas.tool == 'remove')
             instance.detach(c);
@@ -106,6 +109,19 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     instance.bind("connection", function (info, e) {
         if (e != null) // if event is null, the connection has been created programmatically
             info.source.addConnection(info);
+
+        /*console.log('connection added');
+        info.connection.bind('click', function(c) {
+            console.log(c);
+
+            // Connection click
+            if (machineCanvas.tool == 'remove')
+                instance.detach(c.component);
+            else {
+                var connectionName = promptConnectionName(c.component.getOverlay("label").getLabel(), c.component);
+            }
+        });*/
+
     });
 
     instance.bind("connectionDetached", function (info) {
