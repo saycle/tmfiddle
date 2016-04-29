@@ -94,7 +94,6 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     instance.registerConnectionType("basic", {anchor: "Continuous", connector: "StateMachine"});
 
     instance.bind("click", function (c) {
-        console.log('connection clicked');
         // Connection click
         if (machineCanvas.tool == 'remove')
             instance.detach(c);
@@ -103,25 +102,9 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
         }
     });
 
-    /*instance.bind("dblclick", function (c) {
-     instance.detach(c);
-     });*/
     instance.bind("connection", function (info, e) {
         if (e != null) // if event is null, the connection has been created programmatically
             info.source.addConnection(info);
-
-        /*console.log('connection added');
-        info.connection.bind('click', function(c) {
-            console.log(c);
-
-            // Connection click
-            if (machineCanvas.tool == 'remove')
-                instance.detach(c.component);
-            else {
-                var connectionName = promptConnectionName(c.component.getOverlay("label").getLabel(), c.component);
-            }
-        });*/
-
     });
 
     instance.bind("connectionDetached", function (info) {
