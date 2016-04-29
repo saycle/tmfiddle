@@ -113,15 +113,16 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     });
 
     jsPlumb.on(this._canvas, "dblclick", function (e) {
-        promtStateName(false, function (stateName) {
-            configuration.states[stateName] = {
-                presentation: {
-                    position: {x: e.offsetX, y: e.offsetY}
-                },
-                connections: {},
-                accepted: false,
-            };
-            machineCanvas.addState(stateName, configuration.states[stateName]);
+        var newState = {
+            presentation: {
+                position: {x: e.offsetX, y: e.offsetY}
+            },
+            connections: {},
+            accepted: false,
+        };
+        promptStateName(false, newState, function (edit) {
+            configuration.states[edit.id] = edit.state;
+            machineCanvas.addState(edit.id, configuration.states[edit.id]);
         });
     });
 
@@ -141,11 +142,35 @@ var promptConnectionName = function (value, connection, callback) {
     var label = connection.getOverlay("label");
     bootbox.dialog({
             title: "Edit connection",
-            message: '<div class="modal-body"><form class="form-horizontal" id="editConnectionForm"><div class="row">' +
-            '<div class="col-sm-4"><div class="form-group"><label for="connection-read" class="control-label">Read:</label><input type="text" class="form-control" id="connection-read" maxlength="1" value="' + read + '" /></div></div>' +
-            '<div class="col-sm-4"><div class="form-group"><label for="connection-write" class="control-label">Write:</label><input type="text" class="form-control" id="connection-write" maxlength="1" value="' + write + '" /></div></div>' +
-            '<div class="col-sm-4"><div class="form-group"><label for="connection-move" class="control-label">Read:</label><select class="form-control" id="connection-move" value="' + move + '" ><option>L</option><option>R</option><option>S</option></select></div></div>' +
-            '</div></form></div>',
+            message:
+            '<div class="modal-body">' +
+            '            <form class="form-horizontal" id="editConnectionForm">' +
+            '                <div class="row">' +
+            '                    <div class="col-sm-4">' +
+            '                        <div class="form-group">' +
+            '                            <label for="connection-read" class="control-label">Read:</label>' +
+            '                            <input type="text" class="form-control" id="connection-read" maxlength="1" value="' + read + '" />' +
+            '                        </div>' +
+            '                    </div>' +
+            '                    <div class="col-sm-4">' +
+            '                        <div class="form-group">' +
+            '                            <label for="connection-write" class="control-label">Write:</label>' +
+            '                            <input type="text" class="form-control" id="connection-write" maxlength="1" value="' + write + '" />' +
+            '                        </div>' +
+            '                    </div>' +
+            '                    <div class="col-sm-4">' +
+            '                        <div class="form-group">' +
+            '                            <label for="connection-move" class="control-label">Move:</label>' +
+            '                            <select class="form-control" id="connection-move" value="' + move + '">' +
+            '                                <option>L</option>' +
+            '                                <option>R</option>' +
+            '                                <option>S</option>' +
+            '                            </select>' +
+            '                        </div>' +
+            '                    </div>' +
+            '                </div>' +
+            '            </form>' +
+            '        </div>',
             buttons: {
                 success: {
                     label: "Save",
@@ -164,22 +189,51 @@ var promptConnectionName = function (value, connection, callback) {
 };
 
 
-var promtStateName = function (value, callback) {
-    var name = value ? value : '';
+var promptStateName = function (id, state, callback) {
+    var name = id ? id : '';
+    var isStart = false;
+    var isAccepted = state.accepted;
+    var edit = [];
+    edit.state = state;
     bootbox.dialog({
             title: "Edit state",
-            message: '<div class="modal-body"><form class="form-horizontal" id="editStateForm"><div class="row">' +
-            '<div class="col-sm-12"><div class="form-group"><label for="state-name" class="control-label">Name:</label><input type="text" class="form-control" id="state-name" value="' + name + '" onkeyup="checkStateNameEdit(' + value + ')" /></div></div>' +
-            '<p id="invalid-state-name">The state name is not valid or already in use</p>' +
-            '</div></form></div>',
+            message:
+            '<div class="modal-body">' +
+            '            <form class="form-horizontal" id="editStateForm">' +
+            '                <div class="row">' +
+            '                    <div class="col-sm-6">' +
+            '                        <div class="form-group">' +
+            '                            <label for="state-name" class="control-label">Name:</label>' +
+            '                            <input type="text" class="form-control" id="state-name" onkeyup="checkStateNameEdit(' + name + ')"  value="' + name + '" />' +
+            '                        </div>' +
+            '                        <p id="invalid-state-name">The state name is invalid</p>' +
+            '                    </div>' +
+            '                    <div class="col-sm-3">' +
+            '                        <label class="control-label"></label>' +
+            '                        <div class="checkbox">' +
+            '                            <label><input type="checkbox" id="state-isAccepted" ' + (isAccepted ? "checked" : "") + '>Accepted</label>' +
+            '                        </div>' +
+            '                    </div>' +
+            '                    <div class="col-sm-3">' +
+            '                        <label class="control-label"></label>' +
+            '                        <div class="checkbox">' +
+            '                            <label><input type="checkbox" id="state-isStart" ' + (isStart ? "checked" : "") + '>Start State</label>' +
+            '                        </div>' +
+            '                    </div>' +
+            '                </div>' +
+            '            </form>' +
+            '        </div>',
             buttons: {
                 success: {
                     label: "Save",
                     className: "btn-success state-btn",
                     callback: function () {
-                        var stateName = $("#state-name").val();
+                        edit.id = $("#state-name").val();
+                        edit.state.accepted = $("#state-isAccepted").is(":checked");
+                        var startState = $("#state-isStart").is(":checked");
+
                         if (callback) {
-                            callback(stateName);
+                            callback(edit);
                         }
                     }
                 }
@@ -249,11 +303,18 @@ var State = function (name, model, machineCanvas) {
         e.stopPropagation();
 
         if (machineCanvas.tool == 'edit') {
-            promtStateName(d.id, function (newName) {
-                configuration.states[newName] = configuration.states[d.id];
-                delete configuration.states[d.id];
-                d.id = newName;
-                d.innerHTML = newName + "<div class=\"ep\"></div>";
+            promptStateName(d.id, configuration.states[d.id], function (edit) {
+                configuration.states[edit.id] = edit.state;
+                if(d.id != edit.id) {
+                    delete configuration.states[d.id];
+                    d.id = edit.id;
+                    d.innerHTML = edit.id + "<div class=\"ep\"></div>";
+                }
+                if(edit.state.accepted) {
+                    $(d).addClass("state-isAccepted");
+                } else {
+                    $(d).removeClass("state-isAccepted");
+                }
             });
         }
         else if (machineCanvas.tool == 'remove') {
@@ -267,9 +328,7 @@ var State = function (name, model, machineCanvas) {
     });
 
     d.addConnection = function (info) {
-        console.log('addConnection');
         promptConnectionName(false, info.connection, function (connectionName) {
-            console.log('test');
             model.connections[connectionName.split('/')[0]] = {
                 write: connectionName.split('/')[1].split(',')[0],
                 move: connectionName.split('/')[1].split(',')[1],

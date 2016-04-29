@@ -31,6 +31,10 @@
     transition: background-color 0.8s ease;
 }
 
+.w.state-isAccepted {
+    text-decoration: underline;
+}
+
 .aLabel {
     -webkit-transition: background-color 0.25s ease-in;
     -moz-transition: background-color 0.25s ease-in;
