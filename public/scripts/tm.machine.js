@@ -25,6 +25,7 @@ Machine.prototype.clear = function(){
 Machine.prototype.stop = function() {
     clearInterval(this.calculationInterval);
     this.calculationInterval = null;
+    this.tape.stop();
     this.running = false;
 };
 
@@ -37,6 +38,9 @@ Machine.prototype.calculateAll = function(interval) {
 
 Machine.prototype.calculateStep = function() {
     this.setStepCount();
+    if(!this.running) {
+        this.tape.run();
+    }
     this.running = true;
     if(!this.configuration) {
         this.setConfiguration();

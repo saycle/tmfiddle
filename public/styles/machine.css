@@ -1,6 +1,7 @@
 #tape {
     height: 100px;
     width: auto;
+    font-family: 'Inconsolata';
 }
 .tape-column {
     width: 100px;
@@ -36,7 +37,7 @@
     height: 15px;
 }
 .tape-readerwriter-cell.active {
-    background: url('../design/gears-reader.gif') no-repeat;
+    /*background: url('../design/gears-reader.gif') no-repeat;*/
     height: 30px;
     -webkit-box-shadow: 0px -34px 60px -5px rgba(209,209,209,1);
     -moz-box-shadow: 0px -34px 60px -5px rgba(209,209,209,1);

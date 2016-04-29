@@ -1,9 +1,9 @@
 {
-  "name": "TMFiddler",
+  "name": "TMFiddle",
   "homepage": "https://github.com/saycle/tmfiddle",
   "authors": [
     "David Flury <david@flury.email>",
-    "Raphael Müller <raaphii@gmail.com>"
+    "Raphael Mï¿½ller <raaphii@gmail.com>"
   ],
   "description": "Design turing machines and calculate the operations with graphical output.",
   "main": "index.html",
@@ -30,6 +30,8 @@
     "bootstrap": "3.3.6",
     "jsPlumb": "jsplumb#2.1.0",
     "jquery.autotab": "1.9.2",
-    "bootbox.js": "bootbox#^4.4.0"
+    "bootbox.js": "bootbox#^4.4.0",
+    "font-awesome-animation": "^0.0.8",
+    "font-awesome": "^4.6.1"
   }
 }

@@ -27,11 +27,12 @@ Tape.prototype.move = function(move) {
             }
             break;
     }
+    var content = false;
     if(this.readerWriter.pointer) {
-        this.readerWriter.pointer.deactivate();
+        content = this.readerWriter.pointer.deactivate();
     }
     this.readerWriter.pointer = this.columns[this.readerWriter.index];
-    this.readerWriter.pointer.activate();
+    this.readerWriter.pointer.activate(content);
 };
 
 Tape.prototype.position = function(position) {
@@ -121,4 +122,17 @@ Tape.prototype.removeOverflow = function () {
             remove = false;
         }
     }
+};
+
+Tape.prototype.run = function() {
+    if(this.readerWriter) {
+        this.readerWriter.pointer.run();
+    }
+};
+
+Tape.prototype.stop = function() {
+    if(this.readerWriter) {
+        this.readerWriter.pointer.stop();
+    }
+
 };

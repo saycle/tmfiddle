@@ -1,6 +1,30 @@
-html {
+/* inconsolata-regular - latin */
+@font-face {
     font-family: 'Inconsolata';
+    font-style: normal;
+    font-weight: 400;
+    src: url('fonts/inconsolata-v12-latin-regular.eot'); /* IE9 Compat Modes */
+    src: local('Inconsolata'),
+    url('fonts/inconsolata-v12-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('fonts/inconsolata-v12-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+    url('fonts/inconsolata-v12-latin-regular.woff') format('woff'), /* Modern Browsers */
+    url('fonts/inconsolata-v12-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('fonts/inconsolata-v12-latin-regular.svg#Inconsolata') format('svg'); /* Legacy iOS */
 }
+/* inconsolata-700 - latin */
+@font-face {
+    font-family: 'Inconsolata';
+    font-style:normal;
+    font-weight: 700;
+    src: url('fonts/inconsolata-v12-latin-700.eot'); /* IE9 Compat Modes */
+    src: local('Inconsolata Bold'), local('Inconsolata-Bold'),
+    url('fonts/inconsolata-v12-latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('fonts/inconsolata-v12-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
+    url('fonts/inconsolata-v12-latin-700.woff') format('woff'), /* Modern Browsers */
+    url('fonts/inconsolata-v12-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
+    url('fonts/inconsolata-v12-latin-700.svg#Inconsolata') format('svg'); /* Legacy iOS */
+}
+
 .failed {
     background-color: darkred !important;
     color: white !important;
@@ -39,8 +63,15 @@ html {
 }
 
 #machine-container {
-    margin-top: 10px;
     height: 60px;
+}
+
+#machine-interactions {
+    margin-bottom: 15px;
+}
+
+#machine-interactions button, #stepCountContainer {
+    margin-top: 10px;
 }
 
 #stepCountContainer {
@@ -57,10 +88,16 @@ html {
 
 .left {
     float: left;
+    text-align: left;
 }
 
 .right {
     float: right;
+    text-align: right;
+}
+
+.no-padding {
+    padding: 0px;
 }
 
 #modalContainer {
@@ -69,4 +106,26 @@ html {
 
 .form-horizontal .checkbox, .form-horizontal .checkbox-inline, .form-horizontal .radio, .form-horizontal .radio-inline {
     padding-top: 12px;
+}
+
+.readerWriter {
+    position: absolute;
+}
+
+#readerWriter-wheel-body {
+    width: 82px;
+    height: 6px;
+    margin-left: 8px;
+    margin-top: 14px;
+    background-color: #333;
+}
+.readerWriter.wheel {
+    font-size: 35px;
+}
+
+#readerWriter-wheel-left {
+}
+
+#readerWriter-wheel-right {
+    margin-left: 68px;
 }

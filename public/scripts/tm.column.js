@@ -20,12 +20,33 @@ Column.prototype.write = function (value, tape, interupt) {
     this.input.val(value);
 };
 
-Column.prototype.activate = function () {
+Column.prototype.activate = function (content) {
     this.readerwriterCell.addClass('active');
+    if (content) {
+        this.readerwriterCell.html(content);
+
+    } else {
+        this.readerwriterCell.html('<div id="readerWriter">' +
+            '    <i id="readerWriter-wheel-left" class="readerWriter wheel fa fa-gear faa-slow animated"></i>' +
+            '    <span id="readerWriter-wheel-body" class="readerWriter"></span>' +
+            '    <i id="readerWriter-wheel-right" class="readerWriter wheel fa fa-gear faa-slow animated"></i>' +
+            '</div>');
+    }
 };
 
 Column.prototype.deactivate = function () {
     this.readerwriterCell.removeClass('active');
+    var content = this.readerwriterCell.html();
+    this.readerwriterCell.html('');
+    return content;
+};
+
+Column.prototype.run = function () {
+    this.readerwriterCell.find(".wheel").addClass('faa-spin');
+};
+
+Column.prototype.stop = function () {
+    this.readerwriterCell.find(".wheel").removeClass('faa-spin');
 };
 
 Column.prototype.getMarkup = function () {

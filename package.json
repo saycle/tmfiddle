@@ -1,5 +1,5 @@
 {
-  "name": "TMFiddler",
+  "name": "TMFiddle",
   "version": "0.9.0",
   "description": "turing machine designer & simulator",
   "main": "app.js",
