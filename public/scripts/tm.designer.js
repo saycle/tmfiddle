@@ -12,7 +12,7 @@ var MachineCanvas = function () {
     $(document).ready(function () {
         if (JSON.parse(localStorage.configuration))
             $("#example-selector").val("local");
-        $("#example-selector-local").prop('disabled', !JSON.parse(localStorage.configuration));
+            $("#example-selector-local").prop('disabled', !JSON.parse(localStorage.configuration));
 
         $("#example-selector").change(function () {
             $.ajax($(this).val()).done(function (res) {
@@ -46,7 +46,7 @@ MachineCanvas.prototype.initState = function () {
     });
 
     // Connect states
-    self._instance.batch(function() {
+    self._instance.batch(function () {
         jQuery.each(configuration.states, function (i, s) {
             jQuery.each(s.connections, function (k, c) {
                 try {
@@ -67,7 +67,7 @@ MachineCanvas.prototype.initState = function () {
             });
         });
     });
-
+    setStartState();
 };
 
 MachineCanvas.prototype.addState = function (name, model) {
@@ -96,8 +96,11 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     instance.bind("click", function (c) {
         // Connection click
         if (machineCanvas.tool == 'remove') {
-            if (confirm("Remove connection " + c.getOverlay("label").getLabel() + "?"))
-                instance.detach(c);
+            bootbox.confirm('Remove connection "' + c.getOverlay("label").getLabel() + '"', function(result) {
+                if(result) {
+                    instance.detach(c);
+                }
+            });
         }
         else {
             var connectionName = promptConnectionName(c.getOverlay("label").getLabel(), c);
@@ -114,6 +117,8 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     });
 
     jsPlumb.on(this._canvas, "dblclick", function (e) {
+        var self = this;
+        $(this).off(e);
         var newState = {
             presentation: {
                 position: {x: e.offsetX, y: e.offsetY}
@@ -121,16 +126,17 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
             connections: {},
             accepted: false,
         };
-        promptStateName(false, newState, function (edit) {
+        promptStateName(false, newState, true, function (edit) {
             configuration.states[edit.id] = edit.state;
             machineCanvas.addState(edit.id, configuration.states[edit.id]);
+            $(self).on(e);
         });
     });
 
 };
 
 
-var promptConnectionName = function (value, connection, callback) {
+var promptConnectionName = function (value, connection, creationMode, callback) {
     var read = '';
     var write = '';
     var move = '';
@@ -142,9 +148,8 @@ var promptConnectionName = function (value, connection, callback) {
     }
     var label = connection.getOverlay("label");
     bootbox.dialog({
-            title: "Edit connection",
-            message:
-            '<div class="modal-body">' +
+            title: creationMode ? "New connection" : "Edit connection",
+            message: '<div class="modal-body">' +
             '            <form class="form-horizontal" id="editConnectionForm">' +
             '                <div class="row">' +
             '                    <div class="col-sm-4">' +
@@ -190,16 +195,18 @@ var promptConnectionName = function (value, connection, callback) {
 };
 
 
-var promptStateName = function (id, state, callback) {
+var promptStateName = function (id, state, creationMode, callback) {
     var name = id ? id : '';
-    var isStart = false;
+    var isStart = isStartState(id);
     var isAccepted = state.accepted;
     var edit = [];
     edit.state = state;
+    $("#editStateForm").focusin(function() {
+        checkStateNameEdit(name);
+    });
     bootbox.dialog({
-            title: "Edit state",
-            message:
-            '<div class="modal-body">' +
+            title: creationMode ? "Edit state" : "New state",
+            message: '<div class="modal-body"">' +
             '            <form class="form-horizontal" id="editStateForm">' +
             '                <div class="row">' +
             '                    <div class="col-sm-6">' +
@@ -207,7 +214,7 @@ var promptStateName = function (id, state, callback) {
             '                            <label for="state-name" class="control-label">Name:</label>' +
             '                            <input type="text" class="form-control" id="state-name" onkeyup="checkStateNameEdit(' + name + ')"  value="' + name + '" />' +
             '                        </div>' +
-            '                        <p id="invalid-state-name">The state name is invalid</p>' +
+            '                        <p class="invalid"><span id="invalid-state-name">The state name is invalid</span></p>' +
             '                    </div>' +
             '                    <div class="col-sm-3">' +
             '                        <label class="control-label"></label>' +
@@ -231,10 +238,11 @@ var promptStateName = function (id, state, callback) {
                     callback: function () {
                         edit.id = $("#state-name").val();
                         edit.state.accepted = $("#state-isAccepted").is(":checked");
-                        var startState = $("#state-isStart").is(":checked");
-
                         if (callback) {
                             callback(edit);
+                        }
+                        if ($("#state-isStart").is(":checked") && !isStart) {
+                            setStartState(edit.id);
                         }
                     }
                 }
@@ -245,13 +253,25 @@ var promptStateName = function (id, state, callback) {
 
 function checkStateNameEdit(original) {
     var stateName = $("#state-name").val();
-    if(stateName == null || stateName == '' || (configuration.states[stateName] != null && stateName != $(original).attr('id'))) {
+    if (stateName == null || stateName == '' || (configuration.states[stateName] != null && stateName != $(original).attr('id'))) {
         $(".state-btn").prop('disabled', true);
         $("#invalid-state-name").show();
     } else {
         $(".state-btn").prop('disabled', false);
         $("#invalid-state-name").hide();
     }
+}
+
+function isStartState(id) {
+    return (configuration && configuration.startState == id);
+}
+
+function setStartState(id) {
+    if (id) {
+        $("#" + configuration.startState).removeClass("state-isStart");
+        configuration.startState = id;
+    }
+    $("#" + configuration.startState).addClass("state-isStart");
 }
 
 jsPlumb.ready(function () {
@@ -270,6 +290,11 @@ var State = function (name, model, machineCanvas) {
     d.innerHTML = name + "<div class=\"ep\"></div>";
     d.style.left = model.presentation.position.x + "px";
     d.style.top = model.presentation.position.y + "px";
+    if (model.accepted) {
+        $(d).addClass("state-isAccepted");
+    } else {
+        $(d).removeClass("state-isAccepted");
+    }
     machineCanvas._instance.getContainer().appendChild(d);
 
     machineCanvas._instance.draggable(d, {
@@ -304,14 +329,14 @@ var State = function (name, model, machineCanvas) {
         e.stopPropagation();
 
         if (machineCanvas.tool == 'edit') {
-            promptStateName(d.id, configuration.states[d.id], function (edit) {
+            promptStateName(d.id, configuration.states[d.id], false, function (edit) {
                 configuration.states[edit.id] = edit.state;
-                if(d.id != edit.id) {
+                if (d.id != edit.id) {
                     delete configuration.states[d.id];
                     d.id = edit.id;
                     d.innerHTML = edit.id + "<div class=\"ep\"></div>";
                 }
-                if(edit.state.accepted) {
+                if (edit.state.accepted) {
                     $(d).addClass("state-isAccepted");
                 } else {
                     $(d).removeClass("state-isAccepted");
@@ -319,19 +344,20 @@ var State = function (name, model, machineCanvas) {
             });
         }
         else if (machineCanvas.tool == 'remove') {
-            if(confirm("Remove state " + d.id + "?")) {
-                machineCanvas._instance.detachAllConnections(d.id);
-                machineCanvas._instance.removeAllEndpoints(d.id);
-                machineCanvas._instance.detach(d.id);
-                d.remove();
-                delete configuration.states[d.id];
-            }
+            bootbox.confirm('Remove state "' + d.id + '"', function(result) {
+                if(result) {
+                    machineCanvas._instance.detachAllConnections(d.id);
+                    machineCanvas._instance.removeAllEndpoints(d.id);
+                    machineCanvas._instance.detach(d.id);
+                    d.remove();
+                    delete configuration.states[d.id];
+                }
+            });
         }
-
     });
 
     d.addConnection = function (info) {
-        promptConnectionName(false, info.connection, function (connectionName) {
+        promptConnectionName(false, info.connection, true, function (connectionName) {
             model.connections[connectionName.split('/')[0]] = {
                 write: connectionName.split('/')[1].split(',')[0],
                 move: connectionName.split('/')[1].split(',')[1],

@@ -1,7 +1,7 @@
 {
-  "name": "we-like-machines",
+  "name": "TMFiddler",
   "version": "0.9.0",
-  "description": "Online touring machine simulator and designer",
+  "description": "turing machine designer & simulator",
   "main": "app.js",
   "scripts": {
     "postinstall": "./node_modules/.bin/bower install",

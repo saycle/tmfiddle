@@ -1,8 +1,9 @@
 {
-  "name": "we-like-machines",
-  "homepage": "https://github.com/saycle/we-like-machines",
+  "name": "TMFiddler",
+  "homepage": "https://github.com/saycle/tmfiddle",
   "authors": [
-    "David Flury <david@flury.email>"
+    "David Flury <david@flury.email>",
+    "Raphael Müller <raaphii@gmail.com>"
   ],
   "description": "Design turing machines and calculate the operations with graphical output.",
   "main": "index.html",
@@ -13,7 +14,8 @@
     "design",
     "visualization",
     "draw",
-    "calculate"
+    "calculate",
+    "fiddle"
   ],
   "license": "MIT",
   "private": true,
