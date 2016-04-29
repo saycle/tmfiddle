@@ -95,8 +95,10 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
 
     instance.bind("click", function (c) {
         // Connection click
-        if (machineCanvas.tool == 'remove')
-            instance.detach(c);
+        if (machineCanvas.tool == 'remove') {
+            if (confirm("Remove connection " + c.getOverlay("label").getLabel() + "?"))
+                instance.detach(c);
+        }
         else {
             var connectionName = promptConnectionName(c.getOverlay("label").getLabel(), c);
         }
@@ -256,11 +258,13 @@ var State = function (name, model, machineCanvas) {
             });
         }
         else if (machineCanvas.tool == 'remove') {
-            machineCanvas._instance.detachAllConnections(d.id);
-            machineCanvas._instance.removeAllEndpoints(d.id);
-            machineCanvas._instance.detach(d.id);
-            d.remove();
-            delete configuration.states[d.id];
+            if(confirm("Remove state " + d.id + "?")) {
+                machineCanvas._instance.detachAllConnections(d.id);
+                machineCanvas._instance.removeAllEndpoints(d.id);
+                machineCanvas._instance.detach(d.id);
+                d.remove();
+                delete configuration.states[d.id];
+            }
         }
 
     });
