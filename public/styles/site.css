@@ -4,18 +4,18 @@ html {
 .failed {
     background-color: darkred !important;
     color: white !important;
-    -webkit-transition: all 1.4s ease;
-    -moz-transition: all 1.4s ease;
-    -o-transition: all 1.4s ease;
-    transition: all 1.4s ease;
+    -webkit-transition: background-color 1.4s ease;
+    -moz-transition: background-color 1.4s ease;
+    -o-transition: background-color 1.4s ease;
+    transition: background-color 1.4s ease;
 }
 .accepted {
     background-color: darkgreen !important;
     color: white !important;
-    -webkit-transition: all 1.4s ease;
-    -moz-transition: all 1.4s ease;
-    -o-transition: all 1.4s ease;
-    transition: all 1.4s ease;
+    -webkit-transition: background-color 1.4s ease;
+    -moz-transition: background-color 1.4s ease;
+    -o-transition: background-color 1.4s ease;
+    transition: background-color 1.4s ease;
 }
 
 .tm-designer-tools {

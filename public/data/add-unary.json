@@ -1,0 +1,52 @@
+{
+  "states": {
+    "q0": {
+      "presentation": {
+        "position": {
+          "x": 150,
+          "y": 214
+        }
+      },
+      "connections": {
+        "0": {
+          "write": " ",
+          "move": "R",
+          "newState": "q1"
+        },
+        "1": {
+          "write": " ",
+          "move": "R",
+          "newState": "q1"
+        }
+      },
+      "accepted": true
+    },
+    "q1": {
+      "presentation": {
+        "position": {
+          "x": 358,
+          "y": 230
+        }
+      },
+      "connections": {
+        "0": {
+          "write": "1",
+          "move": "R",
+          "newState": "q1"
+        },
+        "1": {
+          "write": "1",
+          "move": "R",
+          "newState": "q1"
+        },
+        " ": {
+          "write": " ",
+          "move": "R",
+          "newState": "q0"
+        }
+      },
+      "accepted": false
+    }
+  },
+  "startState": "q0"
+}

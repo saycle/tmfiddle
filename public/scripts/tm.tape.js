@@ -48,6 +48,7 @@ Tape.prototype.write = function(value) {
 };
 
 Tape.prototype.setFinished = function(status) {
+    this.removeOverflow();
     this.columns.forEach(function(column) {
         column.inputCell.addClass(status ? 'accepted' : 'failed');
     });
@@ -107,4 +108,17 @@ Tape.prototype.addColumn = function(prepend) {
 		this.columns.push(column);
 	}
 	$('.tape-input').autotab({ maxlength: 1 });
+};
+
+Tape.prototype.removeOverflow = function () {
+    var remove = true;
+    var index = 0;
+    while(remove) {
+        if(this.columns.length > 2 && this.columns[index].read() == ' ' && this.columns[index + 1].read() == ' ') {
+            this.columns[index].element.remove();
+            this.columns = this.columns.slice(1);
+        } else {
+            remove = false;
+        }
+    }
 };

@@ -25,10 +25,10 @@
 
 .w.active {
     background-color: darkorange;
-    -webkit-transition: all 0.8s ease;
-    -moz-transition: all 0.8s ease;
-    -o-transition: all 0.8s ease;
-    transition: all 0.8s ease;
+    -webkit-transition: background-color 0.8s ease;
+    -moz-transition: background-color 0.8s ease;
+    -o-transition: background-color 0.8s ease;
+    transition: background-color 0.8s ease;
 }
 
 .aLabel {
@@ -84,7 +84,7 @@
 path, .jsplumb-endpoint { cursor:pointer; }
 
 .jsplumb-connector:hover path {
-    
+
 }
 
 .statemachine-demo { height:500px; border:2px solid #DDD; border-width:2px 0 2px 0; }

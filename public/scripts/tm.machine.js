@@ -17,6 +17,7 @@ Machine.prototype.reset = function() {
 };
 
 Machine.prototype.clear = function(){
+    this.stop();
     this.reset();
     this.tape.clear();
 }
