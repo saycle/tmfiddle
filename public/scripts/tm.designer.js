@@ -118,6 +118,8 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     });
 
     jsPlumb.on(this._canvas, "dblclick", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
         var self = this;
         $(this).off(e);
         var newState = {
