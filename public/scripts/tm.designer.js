@@ -1,5 +1,6 @@
 // Enable persistent configuration
-var configuration = JSON.parse(localStorage.configuration) || {states: {}};
+var localAutoSave = localStorage.configuration ? JSON.parse(localStorage.configuration) : null;
+var configuration = localAutoSave != null && localAutoSave != undefined ? localAutoSave : {states: {}};
 var MachineCanvas = function () {
 
     var self = this;
@@ -16,6 +17,7 @@ var MachineCanvas = function () {
 
         $("#example-selector").change(function () {
             $.ajax($(this).val()).done(function (res) {
+                $(self._canvas).off();
                 configuration = res;
                 self._instance.reset();
                 self._canvas.innerHTML = "";
@@ -116,9 +118,9 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
         info.source.removeConnection(info);
     });
 
-    jsPlumb.on(this._canvas, "dblclick", function (e) {
-        var self = this;
-        $(this).off(e);
+    $(machineCanvas._canvas).on("dblclick", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
         var newState = {
             presentation: {
                 position: {x: e.offsetX, y: e.offsetY}
@@ -129,7 +131,6 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
         promptStateName(false, newState, true, function (edit) {
             configuration.states[edit.id] = edit.state;
             machineCanvas.addState(edit.id, configuration.states[edit.id]);
-            $(self).on(e);
         });
     });
 
