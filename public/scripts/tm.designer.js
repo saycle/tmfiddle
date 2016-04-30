@@ -1,6 +1,6 @@
 // Enable persistent configuration
 var localAutoSave = JSON.parse(localStorage.configuration);
-var configuration = localAutoSave != null && localAutoSave != undefined ? localAutoSave  || {states: {}};
+var configuration = localAutoSave != null && localAutoSave != undefined ? localAutoSave : {states: {}};
 var MachineCanvas = function () {
 
     var self = this;
