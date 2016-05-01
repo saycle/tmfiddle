@@ -95,11 +95,10 @@ path, .jsplumb-endpoint { cursor:pointer; }
 
 }
 
-#canvas {
+#canvas-wrapper {
     height:500px;
     border: solid #DDD;
     border-width:2px 0 2px 0;
-    overflow: auto;
 }
 
 pre {
