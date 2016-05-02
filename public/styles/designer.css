@@ -99,8 +99,11 @@ path, .jsplumb-endpoint { cursor:pointer; }
     height:500px;
     border: solid #DDD;
     border-width:2px 0 2px 0;
-    position: relative;
     overflow: auto;
+}
+
+#canvas {
+    position: relative;
 }
 
 #canvas::-webkit-scrollbar {
