@@ -5,6 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>TMFiddle - online touring machine designer and simulator</title>
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
     <link rel="apple-touch-icon" sizes="57x57" href="/design/favicon/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/design/favicon/apple-touch-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/design/favicon/apple-touch-icon-72x72.png">
@@ -34,6 +37,7 @@
     <link rel="stylesheet" href="styles/site.css"/>
     <link rel="stylesheet" href="styles/machine.css"/>
     <link rel="stylesheet" href="styles/designer.css"/>
+    <link rel="stylesheet" href="styles/mobile.css"/>
 
 
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
@@ -115,10 +119,13 @@
                title="Remove states or connections" tool="remove"><i class="glyphicon glyphicon-remove"></i></a>
         </div>
     </div>
+
     <div id="canvas-wrapper">
-        <div id="canvas" style="position:relative;">
+        <div id="canvas">
         </div>
+        <div class="clear"></div>
     </div>
+
 </div>
 
 <div id="machine-wrapper">

@@ -1,0 +1,51 @@
+@media (max-width: 480px) {
+
+    .tape-column {
+        width: 70px;
+        margin: 5px;
+    }
+
+    .tape-input-cell {
+        height: 55px;
+    }
+
+    .tape-input {
+        font-size: 55px;
+    }
+
+    .tape-readerwriter-cell {
+        margin-top: 3px;
+        height: 8px;
+    }
+
+    .readerWriter {
+        position: absolute;
+    }
+
+    #readerWriter-wheel-body {
+        width: 58px;
+        height: 4px;
+        margin-left: 5px;
+        margin-top: 11px;
+        background-color: #333;
+    }
+
+    .readerWriter.wheel {
+        font-size: 24px;
+    }
+
+    #readerWriter-wheel-left {
+    }
+
+    #readerWriter-wheel-right {
+        margin-left: 48px;
+    }
+
+    .speech-container {
+        left: 140px;
+    }
+
+    #canvas-wrapper {
+        max-width: 480px;
+    }
+}
