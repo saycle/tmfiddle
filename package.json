@@ -12,7 +12,11 @@
     "email": ""
   },
   "dependencies": {
+    "body-parser": "^1.15.0",
     "bower": "1.6.7",
-    "express": "3.21.2"
+    "express": "3.21.2",
+    "pg": "^4.5.5",
+    "randomstring": "^1.1.4",
+    "sequelize": "^3.22.0"
   }
 }
