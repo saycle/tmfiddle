@@ -6,6 +6,7 @@ var MachineCanvas = function () {
     var self = this;
     self.tool = 'move';
     self._canvas = document.getElementById("canvas");
+    self._canvasWrapper = document.getElementById("canvas-wrapper");
     self._instance = null;
     self._initializeJsPlumb();
     self.initState();
@@ -118,9 +119,15 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
         info.source.removeConnection(info);
     });
 
-    $(machineCanvas._canvas).on("dblclick", function (e) {
+    $(machineCanvas._canvasWrapper).on("dblclick", function (e) {
         e.stopPropagation();
         e.preventDefault();
+        if(document.selection && document.selection.empty) {
+            document.selection.empty();
+        } else if(window.getSelection) {
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+        }
         var newState = {
             presentation: {
                 position: {x: e.offsetX, y: e.offsetY}
@@ -206,7 +213,7 @@ var promptStateName = function (id, state, creationMode, callback) {
         checkStateNameEdit(name);
     });
     bootbox.dialog({
-            title: creationMode ? "Edit state" : "New state",
+            title: creationMode ? "New state" : "Edit state",
             message: '<div class="modal-body"">' +
             '            <form class="form-horizontal" id="editStateForm">' +
             '                <div class="row">' +
