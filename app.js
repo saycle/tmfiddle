@@ -3,13 +3,14 @@ var express = require('express');
 var path = require('path');
 var http = require('http');
 var randomstring = require("randomstring");
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 
 var db = require('./db');
 var publicFolder = path.join(__dirname, 'public');
 
 var app = express();
 app.use(bodyParser.json());       // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({ extended: false }));
 
 var generateId = function() {
 	return randomstring.generate({
@@ -25,7 +26,7 @@ app.post('/save', function(req, res) {
 		id: id,
 		machineDefinition: req.body
 	}).then(function(machine) {
-		res.send(id);
+		res.send({id:id});
 	});
 
 	/*return User.create({
@@ -39,6 +40,20 @@ app.post('/save', function(req, res) {
 	});*/
 });
 
+app.get('/get', function(req, res) {
+	var id = req.query.id;
+	db.machine.findAll({
+		where: {
+			id: id
+		}
+	}).then(function(machines) {
+		res.send(machines[0].machineDefinition);
+	});
+});
+//
+app.get(/^\/([a-z0-9]{12})\/?$/, function(req, res) {
+	res.sendfile(path.join(__dirname, 'public/index.html'));
+});
 app.use('/', express.static(publicFolder));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 

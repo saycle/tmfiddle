@@ -1,9 +1,34 @@
+
 // Enable persistent configuration
 var localAutoSave = localStorage.configuration ? JSON.parse(localStorage.configuration) : null;
 var configuration = localAutoSave != null && localAutoSave != undefined ? localAutoSave : {states: {}};
-var MachineCanvas = function () {
 
+var MachineCanvas = function () {
     var self = this;
+
+    // Check if fiddle URL was provided
+    if(window.location.pathname != '/') {
+
+        var fiddleId = window.location.pathname.substr(1);
+        console.log("trying to load fiddle " + fiddleId);
+        var service = new FiddleService();
+        service.getFiddle(fiddleId).done(function(machine) {
+            $(self._canvas).off();
+            configuration = machine;
+            self._instance.reset();
+            self._canvas.innerHTML = "";
+            self._initializeJsPlumb();
+            self.initState();
+            setTimeout(function () {
+                jsPlumb.repaintEverything();
+            }, 20);
+            $("#example-selector-saved").prop('disabled', false);
+            $("#example-selector").val('saved');
+        });
+    }
+
+
+
     self.tool = 'move';
     self._canvas = document.getElementById("canvas");
     self._canvasWrapper = document.getElementById("canvas-wrapper");
@@ -36,6 +61,13 @@ var MachineCanvas = function () {
             $(this).addClass('btn-primary');
         });
 
+        $("#action-save").click(function(e) {
+            e.preventDefault();
+            var service = new FiddleService();
+            service.saveFiddle(configuration).done(function(fiddleId) {
+                window.location.href = "/" + fiddleId;
+            });
+        });
     });
 };
 
