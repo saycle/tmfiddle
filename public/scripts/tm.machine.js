@@ -45,6 +45,9 @@ Machine.prototype.calculateStep = function() {
     if(!this.configuration) {
         this.setConfiguration();
     }
+    if(!this.currentState) {
+        return this.setFinished(false);
+    }
     var step = this.configuration.states[this.currentState].connections[this.tape.read()];
     if(step) {
         this.tape.write(step.write);

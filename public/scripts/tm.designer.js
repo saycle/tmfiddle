@@ -14,11 +14,12 @@ var MachineCanvas = function () {
     $(document).ready(function () {
         if (JSON.parse(localStorage.configuration))
             $("#example-selector").val("local");
-            $("#example-selector-local").prop('disabled', !JSON.parse(localStorage.configuration));
+        $("#example-selector-local").prop('disabled', !JSON.parse(localStorage.configuration));
 
         $("#example-selector").change(function () {
             $.ajax($(this).val()).done(function (res) {
                 $(self._canvas).off();
+                $(self._canvasWrapper).off();
                 configuration = res;
                 self._instance.reset();
                 self._canvas.innerHTML = "";
@@ -41,6 +42,8 @@ var MachineCanvas = function () {
 
 MachineCanvas.prototype.initState = function () {
     var self = this;
+
+    machine.reset();
 
 
     // Load initial configuration
@@ -99,20 +102,25 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     instance.bind("click", function (c) {
         // Connection click
         if (machineCanvas.tool == 'remove') {
-            bootbox.confirm('Remove connection "' + c.getOverlay("label").getLabel() + '"', function(result) {
-                if(result) {
+            bootbox.confirm('Remove connection "' + c.getOverlay("label").getLabel() + '"', function (result) {
+                if (result) {
                     instance.detach(c);
+                    machine.reset();
                 }
             });
         }
         else {
-            var connectionName = promptConnectionName(c.getOverlay("label").getLabel(), c);
+            promptConnectionName(c.getOverlay("label").getLabel(), c);
         }
+        machine.reset();
     });
 
+
     instance.bind("connection", function (info, e) {
-        if (e != null) // if event is null, the connection has been created programmatically
+        if (e != null) {
+        // if event is null, the connection has been created programmatically
             info.source.addConnection(info);
+        }
     });
 
     instance.bind("connectionDetached", function (info) {
@@ -122,9 +130,9 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     $(machineCanvas._canvasWrapper).on("dblclick", function (e) {
         e.stopPropagation();
         e.preventDefault();
-        if(document.selection && document.selection.empty) {
+        if (document.selection && document.selection.empty) {
             document.selection.empty();
-        } else if(window.getSelection) {
+        } else if (window.getSelection) {
             var sel = window.getSelection();
             sel.removeAllRanges();
         }
@@ -195,6 +203,7 @@ var promptConnectionName = function (value, connection, creationMode, callback) 
                         if (callback) {
                             callback(connectionName);
                         }
+                        machine.reset();
                     }
                 }
             }
@@ -209,7 +218,7 @@ var promptStateName = function (id, state, creationMode, callback) {
     var isAccepted = state.accepted;
     var edit = [];
     edit.state = state;
-    $("#editStateForm").focusin(function() {
+    $("#editStateForm").focusin(function () {
         checkStateNameEdit(name);
     });
     bootbox.dialog({
@@ -252,6 +261,7 @@ var promptStateName = function (id, state, creationMode, callback) {
                         if ($("#state-isStart").is(":checked") && !isStart) {
                             setStartState(edit.id);
                         }
+                        machine.reset();
                     }
                 }
             }
@@ -352,13 +362,14 @@ var State = function (name, model, machineCanvas) {
             });
         }
         else if (machineCanvas.tool == 'remove') {
-            bootbox.confirm('Remove state "' + d.id + '"', function(result) {
-                if(result) {
+            bootbox.confirm('Remove state "' + d.id + '"', function (result) {
+                if (result) {
                     machineCanvas._instance.detachAllConnections(d.id);
                     machineCanvas._instance.removeAllEndpoints(d.id);
                     machineCanvas._instance.detach(d.id);
                     d.remove();
                     delete configuration.states[d.id];
+                    machine.reset();
                 }
             });
         }
@@ -376,8 +387,10 @@ var State = function (name, model, machineCanvas) {
 
     d.removeConnection = function (info) {
         delete model.connections[info.connection.getOverlay("label").getLabel().split('/')[0]];
+        machine.reset();
     };
 };
+
 
 window.setInterval(function () {
     $("#code").html(JSON.stringify(configuration, null, 2));
