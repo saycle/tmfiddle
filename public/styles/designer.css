@@ -100,6 +100,7 @@ path, .jsplumb-endpoint { cursor:pointer; }
     border: solid #DDD;
     border-width:2px 0 2px 0;
     overflow: auto;
+    resize: vertical;
 }
 
 pre {
