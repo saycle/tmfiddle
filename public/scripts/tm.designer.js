@@ -118,7 +118,7 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
 
     instance.bind("connection", function (info, e) {
         if (e != null) {
-        // if event is null, the connection has been created programmatically
+            // if event is null, the connection has been created programmatically
             info.source.addConnection(info);
         }
     });
@@ -319,9 +319,34 @@ var State = function (name, model, machineCanvas) {
         drag: function (draggedWrapper) {
             $(draggedWrapper.el).one('click', function (e) {
                 e.stopPropagation();
+                e.preventDefault();
             });
             model.presentation.position.x = draggedWrapper.pos[0];
-            model.presentation.position.y = draggedWrapper.pos[1];// - $(machineCanvas._instance.getContainer()).offset().top;
+            model.presentation.position.y = draggedWrapper.pos[1];
+        },
+        stop: function (draggedWrapper) {
+            var expandLeft = draggedWrapper.pos[0] < 0 ? draggedWrapper.pos[0] * -1 : 0;
+            var expandTop = draggedWrapper.pos[1] < 0 ? draggedWrapper.pos[1] * -1 : 0;
+            if (expandLeft > 0 || expandTop > 0) {
+                if (expandLeft > 0) {
+                    //$(draggedWrapper.el).animate({left: 0});
+                    model.presentation.position.x = 0;
+                }
+                if (expandTop > 0) {
+                    //$(draggedWrapper.el).animate({top: 0});
+                    model.presentation.position.y = 0;
+                }
+                jsPlumb.repaintEverything();
+            }
+
+            /*$(".w").not(draggedWrapper.el).each(function () {
+             if (expandLeft > 0) {
+             $(this).animate({left: (parseInt($(this).css('left'), 10) + expandLeft)});
+             }
+             if (expandTop > 0) {
+             $(this).animate({top: (parseInt($(this).css('top'), 10) + expandTop)});
+             }
+             });*/
         }
     });
 
