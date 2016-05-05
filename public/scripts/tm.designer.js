@@ -96,7 +96,7 @@ MachineCanvas.prototype.initState = function () {
                     });
                     var label = k + '/' + c.write + "," + c.move;
                     //label = label.replace(/ /g, '_'); // replace blank chars
-                    connection.getOverlay("label").setLabel(label);
+                    connection.getOverlay("label").setLabel(label.replace(' ', '&nbsp;'));
                 }
                 catch (e) { // endpoint does not exist - remove connection
                     console.log(e);
@@ -142,7 +142,7 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
             });
         }
         else {
-            promptConnectionName(c.getOverlay("label").getLabel(), c);
+            promptConnectionName(c.getOverlay("label").getLabel().replace('&nbsp;', ' '), c);
         }
         machine.reset();
     });
@@ -189,7 +189,9 @@ var promptConnectionName = function (value, connection, creationMode, callback) 
     var write = '';
     var move = '';
 
+
     if (value) {
+        value = value.replace('&nbsp;', ' ');
         read = value.split('/')[0];
         write = value.split('/')[1].split(',')[0];
         move = value.split('/')[1].split(',')[1];
@@ -231,7 +233,7 @@ var promptConnectionName = function (value, connection, creationMode, callback) 
                     className: "btn-success",
                     callback: function () {
                         var connectionName = $("#connection-read").val() + '/' + $("#connection-write").val() + ',' + $("#connection-move").val();
-                        label.setLabel(connectionName);
+                        label.setLabel(connectionName.replace(' ', '&nbsp;'));
                         if (callback) {
                             callback(connectionName);
                         }
