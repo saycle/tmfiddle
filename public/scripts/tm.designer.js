@@ -1,7 +1,11 @@
 
-// Enable persistent configuration
-var localAutoSave = localStorage.configuration ? JSON.parse(localStorage.configuration) : null;
-var configuration = localAutoSave != null && localAutoSave != undefined ? localAutoSave : {states: {}};
+// Global configuration object
+var configuration = {states: {}};
+console.log(localStorage.configuration);
+var localAutoSave = localStorage && localStorage.configuration && localStorage.configuration != undefined
+    ? JSON.parse(localStorage.configuration)
+    : null;
+console.log(localAutoSave);
 
 var MachineCanvas = function () {
     var self = this;
@@ -13,21 +17,10 @@ var MachineCanvas = function () {
         console.log("trying to load fiddle " + fiddleId);
         var service = new FiddleService();
         service.getFiddle(fiddleId).done(function(machine) {
-            $(self._canvas).off();
             configuration = machine;
-            self._instance.reset();
-            self._canvas.innerHTML = "";
-            self._initializeJsPlumb();
-            self.initState();
-            setTimeout(function () {
-                jsPlumb.repaintEverything();
-            }, 20);
-            $("#example-selector-saved").prop('disabled', false);
-            $("#example-selector").val('saved');
+            self.reloadConfiguration();
         });
     }
-
-
 
     self.tool = 'move';
     self._canvas = document.getElementById("canvas");
@@ -36,23 +29,31 @@ var MachineCanvas = function () {
     self._initializeJsPlumb();
     self.initState();
 
+    self.reloadConfiguration = function() {
+        $(self._canvas).off();
+        $(self._canvasWrapper).off();
+        self._instance.reset();
+        self._canvas.innerHTML = "";
+        self._initializeJsPlumb();
+        self.initState();
+        setTimeout(function () {
+            jsPlumb.repaintEverything();
+        }, 20);
+    };
+
     $(document).ready(function () {
-        if (JSON.parse(localStorage.configuration))
-            $("#example-selector").val("local");
-        $("#example-selector-local").prop('disabled', !JSON.parse(localStorage.configuration));
+        if(localAutoSave != null) {
+            $(".tm-autosave-detected").show().click(function() {
+                configuration = localAutoSave;
+                self.reloadConfiguration();
+                $(".tm-autosave-detected").hide();
+            });
+        }
 
         $("#example-selector").change(function () {
             $.ajax($(this).val()).done(function (res) {
-                $(self._canvas).off();
-                $(self._canvasWrapper).off();
                 configuration = res;
-                self._instance.reset();
-                self._canvas.innerHTML = "";
-                self._initializeJsPlumb();
-                self.initState();
-                setTimeout(function () {
-                    jsPlumb.repaintEverything();
-                }, 20);
+                self.reloadConfiguration();
             });
         });
 
@@ -453,6 +454,6 @@ var State = function (name, model, machineCanvas) {
 
 window.setInterval(function () {
     $("#code").html(JSON.stringify(configuration, null, 2));
-    if (configuration != null && configuration != undefined)
+    if (configuration != null && configuration != undefined && localStorage)
         localStorage.configuration = JSON.stringify(configuration);
 }, 1000);
