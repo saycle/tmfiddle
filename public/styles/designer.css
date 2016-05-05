@@ -32,7 +32,8 @@
 }
 
 .w.state-isAccepted {
-    text-decoration: underline;
+    border: 6px double #666;
+    padding:13px;
 }
 
 .w.state-isStart {
