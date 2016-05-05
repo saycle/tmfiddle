@@ -12,7 +12,7 @@
     "email": ""
   },
   "dependencies": {
-    "body-parser": "^1.15.0",
+    "body-parser": "1.14.1",
     "bower": "1.6.7",
     "express": "3.21.2",
     "pg": "^4.5.5",
