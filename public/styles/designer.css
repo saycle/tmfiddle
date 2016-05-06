@@ -29,15 +29,36 @@
     -moz-transition: background-color 0.8s ease;
     -o-transition: background-color 0.8s ease;
     transition: background-color 0.8s ease;
+    color:#FFF;
 }
 
 .w.state-isAccepted {
     border: 6px double #2E6F9C;
     padding:13px;
 }
+.w.state-isAccepted.accepted.active { border-color:#FFF; }
 
-.w.state-isStart {
-    background-color: violet;
+.w.state-isStart:before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: -45px;
+    width: 40px;
+    height: 4px;
+    top: 22px;
+    background: #2E6F9C;
+}
+
+.w.state-isStart:after {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: -9px;
+    width: 0px;
+    height: 0px;
+    border:10px solid #2E6F9C;
+    border-color:transparent transparent transparent #2E6F9C;
+    top: 14px;
 }
 
 .aLabel {
