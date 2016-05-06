@@ -1,11 +1,9 @@
 
 // Global configuration object
 var configuration = {states: {}};
-console.log(localStorage.configuration);
 var localAutoSave = localStorage && localStorage.configuration && localStorage.configuration != undefined
     ? JSON.parse(localStorage.configuration)
     : null;
-console.log(localAutoSave);
 
 var MachineCanvas = function () {
     var self = this;
@@ -150,8 +148,8 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
 
 
     instance.bind("connection", function (info, e) {
+        // if event is null, the connection has been created programmatically
         if (e != null) {
-            // if event is null, the connection has been created programmatically
             info.source.addConnection(info);
         }
     });
@@ -248,7 +246,7 @@ var promptConnectionName = function (value, connection, creationMode, callback) 
 
 
 var promptStateName = function (id, state, creationMode, callback) {
-    var name = id ? id : '';
+    var name = id ? id : 'q' + $(".w").size();
     var isStart = isStartState(id);
     var isAccepted = state.accepted;
     var edit = [];
