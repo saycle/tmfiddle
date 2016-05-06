@@ -73,8 +73,7 @@ var MachineCanvas = function () {
 
 MachineCanvas.prototype.initState = function () {
     var self = this;
-
-    machine.reset();
+	resetMachine();
 
 
     // Load initial configuration
@@ -136,14 +135,14 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
             bootbox.confirm('Remove connection "' + c.getOverlay("label").getLabel() + '"', function (result) {
                 if (result) {
                     instance.detach(c);
-                    machine.reset();
+					resetMachine();
                 }
             });
         }
         else {
             promptConnectionName(c.getOverlay("label").getLabel().replace('&nbsp;', ' '), c);
         }
-        machine.reset();
+		resetMachine();
     });
 
 
@@ -161,12 +160,7 @@ MachineCanvas.prototype._initializeJsPlumb = function () {
     $(machineCanvas._canvasWrapper).on("dblclick", function (e) {
         e.stopPropagation();
         e.preventDefault();
-        if (document.selection && document.selection.empty) {
-            document.selection.empty();
-        } else if (window.getSelection) {
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-        }
+       clearSelection();
         var newState = {
             presentation: {
                 position: {x: e.offsetX, y: e.offsetY}
@@ -236,7 +230,7 @@ var promptConnectionName = function (value, connection, creationMode, callback) 
                         if (callback) {
                             callback(connectionName);
                         }
-                        machine.reset();
+						resetMachine();
                     }
                 }
             }
@@ -294,7 +288,7 @@ var promptStateName = function (id, state, creationMode, callback) {
                         if ($("#state-isStart").is(":checked") && !isStart) {
                             setStartState(edit.id);
                         }
-                        machine.reset();
+						resetMachine();
                     }
                 }
             }
@@ -427,7 +421,7 @@ var State = function (name, model, machineCanvas) {
                     machineCanvas._instance.detach(d.id);
                     d.remove();
                     delete configuration.states[d.id];
-                    machine.reset();
+					resetMachine();
                 }
             });
         }
@@ -445,7 +439,7 @@ var State = function (name, model, machineCanvas) {
 
     d.removeConnection = function (info) {
         delete model.connections[info.connection.getOverlay("label").getLabel().split('/')[0]];
-        machine.reset();
+					resetMachine();
     };
 };
 
@@ -455,3 +449,18 @@ window.setInterval(function () {
     if (configuration != null && configuration != undefined && localStorage)
         localStorage.configuration = JSON.stringify(configuration);
 }, 1000);
+
+function clearSelction() {
+	 if (document.selection && document.selection.empty) {
+         document.selection.empty();
+     } else if (window.getSelection) {
+         var sel = window.getSelection();
+         sel.removeAllRanges();
+     }
+}
+
+function resetMachine() {
+	if(machine) {
+		machine.reset();
+	}
+}
