@@ -450,7 +450,7 @@ window.setInterval(function () {
         localStorage.configuration = JSON.stringify(configuration);
 }, 1000);
 
-function clearSelction() {
+function clearSelection() {
 	 if (document.selection && document.selection.empty) {
          document.selection.empty();
      } else if (window.getSelection) {
